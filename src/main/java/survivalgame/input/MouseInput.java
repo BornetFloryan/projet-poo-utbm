@@ -1,0 +1,45 @@
+package survivalgame.input;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import javax.swing.SwingUtilities;
+
+/** Mémorise la visée et l'état maintenu du clic gauche. */
+public final class MouseInput extends MouseAdapter {
+    private double x;
+    private double y;
+    private boolean shooting;
+    private double scale = 1;
+    private double offsetX;
+    private double offsetY;
+    private double mapOffsetX;
+    private double mapOffsetY;
+
+    public void setTransform(double scale, double offsetX, double offsetY,
+                             double mapOffsetX, double mapOffsetY) {
+        this.scale = scale;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+        this.mapOffsetX = mapOffsetX;
+        this.mapOffsetY = mapOffsetY;
+    }
+
+    public Point2D.Double getAim() { return new Point2D.Double(x, y); }
+    public boolean isShooting() { return shooting; }
+
+    @Override public void mouseMoved(MouseEvent event) { update(event); }
+    @Override public void mouseDragged(MouseEvent event) { update(event); }
+    @Override public void mousePressed(MouseEvent event) {
+        update(event);
+        if (SwingUtilities.isLeftMouseButton(event)) shooting = true;
+    }
+    @Override public void mouseReleased(MouseEvent event) {
+        if (SwingUtilities.isLeftMouseButton(event)) shooting = false;
+    }
+
+    private void update(MouseEvent event) {
+        x = (event.getX() - offsetX) / scale - mapOffsetX;
+        y = (event.getY() - offsetY) / scale - mapOffsetY;
+    }
+}

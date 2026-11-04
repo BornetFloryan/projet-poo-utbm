@@ -1,0 +1,109 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package model {
+  abstract class Entity {
+    -x: double
+    -y: double
+    -facingAngle: double
+    -width: int
+    -height: int
+    +update(state, distanceField)
+  }
+  abstract class Character {
+    -health: int
+    -maxHealth: int
+    -speed: double
+    -radius: double
+    +takeDamage(amount)
+  }
+  class Player {
+    -score: int
+    -credits: int
+    -weapon: Weapon
+    +receiveContactDamage(now)
+  }
+  abstract class Enemy
+  class NormalZombie
+  class FastZombie
+  class Projectile
+  abstract class Element
+  class Obstacle
+  class Barricade {
+    -durability: int
+    +takeDamage(amount): boolean
+  }
+  class GameMap {
+    -seed: long
+    +distanceField(column, row): int[][]
+    +isBlocked(x, y, radius): boolean
+  }
+  class GameState {
+    -wave: int
+  }
+  class MapGenerator { +generate(seed): GameMap }
+  class WaveManager {
+    +startWave(state)
+    +update(state)
+  }
+  class ShopManager { +buy(state, item): String }
+  class GameStatus <<enumeration>>
+  class Weapon <<record>>
+  class "SpawnPoint" as SpawnPoint <<record>>
+  enum SpawnType {
+    WINDOW
+    LADDER
+  }
+
+  Entity <|-- Character
+  Entity <|-- Projectile
+  Character <|-- Player
+  Character <|-- Enemy
+  Enemy <|-- NormalZombie
+  Enemy <|-- FastZombie
+  Element <|-- Obstacle
+  Obstacle <|-- Barricade
+  GameState *-- Player
+  GameState *-- GameMap
+  GameState *-- "0..*" Enemy
+  GameState *-- "0..*" Projectile
+  GameMap *-- "0..*" Obstacle
+  GameMap o-- "4 windows + 1 ladder" SpawnPoint
+  SpawnPoint --> SpawnType
+  Player --> Weapon
+  MapGenerator ..> GameMap
+}
+
+package controller {
+  class GameEngine
+  GameEngine --> GameState
+  GameEngine --> WaveManager
+  GameEngine --> ShopManager
+  GameEngine --> GameStatus
+}
+
+package input {
+  class KeyboardInput
+  class MouseInput
+}
+
+package view {
+  class MainWindow
+  class GamePanel
+  class GameRenderer
+  class SpriteAtlas
+  MainWindow *-- GamePanel
+  GamePanel --> GameEngine
+  GamePanel --> KeyboardInput
+  GamePanel --> MouseInput
+  GamePanel --> GameRenderer
+  GameRenderer --> SpriteAtlas
+}
+
+package persistence {
+  class ScoreManager
+  class ScoreEntry <<record>>
+  ScoreManager --> "0..*" ScoreEntry
+  GameEngine --> ScoreManager
+}
+@enduml
