@@ -1,6 +1,9 @@
 package survivalgame.model;
 
-/** Obstacle infranchissable et indestructible. */
+/**
+ * Obstacle infranchissable et indestructible.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public class Obstacle extends Element {
     private final boolean boundary;
 

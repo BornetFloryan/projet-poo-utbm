@@ -7,7 +7,10 @@ import java.util.Map;
 import java.io.IOException;
 import java.io.InputStream;
 
-/** Charge les tuiles et personnages depuis l'atlas pixel-art du jeu. */
+/**
+ * Charge les tuiles et personnages depuis l'atlas pixel-art du jeu.
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 final class SpriteAtlas {
     enum Sprite { FLOOR, BRICK, WINDOW, SANDBAG, PLAYER, ZOMBIE, FAST_ZOMBIE, BULLET }
 

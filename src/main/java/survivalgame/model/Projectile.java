@@ -1,6 +1,9 @@
 package survivalgame.model;
 
-/** Projectile rectiligne avec une portée maximale. */
+/**
+ * Projectile rectiligne avec une portée maximale.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class Projectile extends Entity {
     private final double velocityX;
     private final double velocityY;

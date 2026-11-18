@@ -9,7 +9,10 @@ import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.Set;
 
-/** Suit l'état des touches sans dépendre de leur répétition par le système. */
+/**
+ * Suit l'état des touches sans dépendre de leur répétition par le système.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class KeyboardInput {
     private final Set<Integer> pressedKeys = new HashSet<>();
 

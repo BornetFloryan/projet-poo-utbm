@@ -2,7 +2,10 @@ package survivalgame.model;
 
 import java.util.Random;
 
-/** Gère les vagues et espace les apparitions pour éviter les groupes trop denses. */
+/**
+ * Gère les vagues et espace les apparitions pour éviter les groupes trop denses.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class WaveManager {
     private Random random;
     private int remainingToSpawn;

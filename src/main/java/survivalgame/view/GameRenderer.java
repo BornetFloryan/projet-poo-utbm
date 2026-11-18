@@ -17,7 +17,10 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-/** Affiche les écrans et le terrain sans contenir de règles de jeu. */
+/**
+ * Affiche les écrans et le terrain sans contenir de règles de jeu.
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 final class GameRenderer {
     static final int WIDTH = 960;
     static final int HEIGHT = 640;

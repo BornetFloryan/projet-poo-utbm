@@ -21,14 +21,6 @@ Menu, instructions, classement, déplacement AZERTY/QWERTY, tir automatique, deu
 
 Le vecteur de déplacement est normalisé pour que la diagonale ne soit pas plus rapide. Un BFS parcourt la grille à partir du joueur et fournit aux ennemis un champ de distance ; ceux-ci choisissent une case voisine plus proche. Le générateur vérifie ensuite que toutes les cases libres appartiennent au même ensemble accessible. Les coordonnées de simulation restent logiques ; seule la transformation graphique change quand la fenêtre est redimensionnée.
 
-## Limites réellement constatées
-
-Le diagramme UML d'origine était une image ; le PlantUML du projet reflète les packages MVC et les classes actuelles. Les vérifications automatisées couvrent le modèle, le chargement/sauvegarde et le rendu hors écran. Les clics Swing doivent encore être démontrés sur un poste graphique.
-
-## Améliorations possibles
-
-Ajouter des effets sonores et animations, des tests de clic Swing, une génération plus variée et un écran de saisie de pseudonyme intégré au lieu d'une boîte de dialogue.
-
 ## Questions possibles
 
 **Pourquoi normaliser les diagonales ?** La somme des composantes d'un déplacement diagonal serait plus grande que celle d'un déplacement horizontal ; la multiplication par `1/√2` conserve la même longueur.

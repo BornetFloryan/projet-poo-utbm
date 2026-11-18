@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** Données détenues par une partie. */
+/**
+ * Données détenues par une partie.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class GameState {
     private final Player player;
     private GameMap map;

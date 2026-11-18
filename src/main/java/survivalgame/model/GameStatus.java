@@ -1,6 +1,9 @@
 package survivalgame.model;
 
-/** Écrans et phases de l'application. */
+/**
+ * Écrans et phases de l'application.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public enum GameStatus {
     /** Écran d'accueil. */ MENU,
     /** Partie en cours. */ PLAYING,

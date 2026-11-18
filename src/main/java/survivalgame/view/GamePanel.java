@@ -18,7 +18,10 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.List;
 
-/** Vue du jeu et point d'entrée des événements Swing. */
+/**
+ * Vue du jeu et point d'entrée des événements Swing.
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 @SuppressWarnings("serial")
 public final class GamePanel extends JPanel implements MouseListener {
     private static final long serialVersionUID = 1L;

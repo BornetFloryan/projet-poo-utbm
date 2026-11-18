@@ -1,6 +1,9 @@
 package survivalgame.model;
 
-/** Barricade de fenêtre que les tirs et les zombies peuvent détruire. */
+/**
+ * Barricade de fenêtre que les tirs et les zombies peuvent détruire.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class Barricade extends Obstacle {
     private int durability = 4;
 

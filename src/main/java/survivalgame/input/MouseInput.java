@@ -5,7 +5,10 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import javax.swing.SwingUtilities;
 
-/** Mémorise la visée et l'état maintenu du clic gauche. */
+/**
+ * Mémorise la visée et l'état maintenu du clic gauche.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class MouseInput extends MouseAdapter {
     private double x;
     private double y;

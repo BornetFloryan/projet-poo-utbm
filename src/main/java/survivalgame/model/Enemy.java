@@ -1,6 +1,9 @@
 package survivalgame.model;
 
-/** Base polymorphe des zombies qui suivent le joueur sur la grille. */
+/**
+ * Base polymorphe des zombies qui suivent le joueur sur la grille.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public abstract class Enemy extends Character {
     private long lastBarricadeAttack;
 

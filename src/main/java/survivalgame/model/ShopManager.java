@@ -1,6 +1,9 @@
 package survivalgame.model;
 
-/** Vérifie et applique les achats entre deux vagues. */
+/**
+ * Vérifie et applique les achats entre deux vagues.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class ShopManager {
     /** Crée un gestionnaire d'achats. */
     public ShopManager() { }

@@ -1,6 +1,9 @@
 package survivalgame.model;
 
-/** Élément fixe de décor positionné sur la grille. */
+/**
+ * Élément fixe de décor positionné sur la grille.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public abstract class Element {
     private final int column;
     private final int row;

@@ -2,7 +2,10 @@ package survivalgame.model;
 
 import java.util.Random;
 
-/** Produit des cartes petites, reproductibles et accessibles. */
+/**
+ * Produit des cartes petites, reproductibles et accessibles.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class MapGenerator {
     /** Crée un générateur de cartes. */
     public MapGenerator() { }

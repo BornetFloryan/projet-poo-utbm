@@ -31,10 +31,9 @@ Le script compile avec `javac` dans `out/` puis lance `survivalgame.Main`. En ID
 - `view/` : fenêtre, panneau Swing, rendu et chargement des sprites.
 - `persistence/` : lecture/écriture du classement et des parties.
 - `src/main/resources/images/arena-atlas.png` : textures du terrain et sprites.
-- `ARCHITECTURE.md`, `SOUTENANCE.md`, `TESTS.md` : préparation et documentation.
-- `EVALUATION.md` : correspondance avec les critères du PDF.
+- `ARCHITECTURE.md` et `SOUTENANCE.md` : architecture et présentation du projet.
 - `UML.puml` : diagramme PlantUML à jour.
 
 La carte fait 22 × 14 tuiles. Elle a quatre fenêtres barricadées et une échelle intérieure dont les positions varient d'une carte à l'autre. Une nouvelle carte apparaît toutes les trois vagues. Les zombies essaient de passer par les fenêtres et attaquent les barricades lorsqu'elles bloquent leur chemin ; le joueur peut aussi les détruire. Les sprites mobiles pivotent vers leur direction de visée ou de déplacement.
 
-Le PDF de modalités fourni et le diagramme UML d'origine sont conservés à côté de ce README. Le diagramme PlantUML reflète les classes et les packages du projet.
+Le PDF de modalités fourni et le diagramme UML d'origine sont conservés à côté de ce README. Le diagramme PlantUML reflète les classes et les packages du projet et peut être importé dans draw.io.

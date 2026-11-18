@@ -1,55 +1,140 @@
 @startuml
+' Diagramme des classes source, importable dans draw.io avec PlantUML.
 skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide empty members
 
-package model {
+package "survivalgame.model" as model {
   abstract class Entity {
-    -x: double
-    -y: double
-    -facingAngle: double
-    -width: int
-    -height: int
-    +update(state, distanceField)
+    - x: double
+    - y: double
+    - facingAngle: double
+    - width: int
+    - height: int
+    + getX(): double
+    + getY(): double
+    + getFacingAngle(): double
+    + setPosition(x: double, y: double): void
+    + setFacingAngle(angle: double): void
+    + getBounds(): Rectangle2D
+    {abstract} + update(state: GameState, distanceField: int[][]): void
   }
   abstract class Character {
-    -health: int
-    -maxHealth: int
-    -speed: double
-    -radius: double
-    +takeDamage(amount)
+    - health: int
+    - maxHealth: int
+    - speed: double
+    - radius: double
+    + getHealth(): int
+    + getMaxHealth(): int
+    + isDead(): boolean
+    + takeDamage(amount: int): void
   }
   class Player {
-    -score: int
-    -credits: int
-    -weapon: Weapon
-    +receiveContactDamage(now)
+    - score: int
+    - credits: int
+    - weapon: Weapon
+    - lastDamageTime: long
+    + addReward(points: int, credits: int): void
+    + spendCredits(amount: int): boolean
+    + receiveContactDamage(now: long): void
+    + restoreProgress(...): void
   }
-  abstract class Enemy
+  abstract class Enemy {
+    - lastBarricadeAttack: long
+  }
   class NormalZombie
   class FastZombie
-  class Projectile
-  abstract class Element
-  class Obstacle
+  class Projectile {
+    - velocityX: double
+    - velocityY: double
+    - damage: int
+    - remainingRange: double
+    + getDamage(): int
+    + getRemainingRange(): double
+  }
+  abstract class Element {
+    - column: int
+    - row: int
+    + getColumn(): int
+    + getRow(): int
+  }
+  class Obstacle {
+    - boundary: boolean
+    + isBoundary(): boolean
+    + isDestructible(): boolean
+    + takeDamage(damage: int): boolean
+  }
   class Barricade {
-    -durability: int
-    +takeDamage(amount): boolean
+    - durability: int
+    + getDurability(): int
+    + takeDamage(damage: int): boolean
   }
   class GameMap {
-    -seed: long
-    +distanceField(column, row): int[][]
-    +isBlocked(x, y, radius): boolean
+    + TILE_SIZE: int = 32
+    + COLUMNS: int = 22
+    + ROWS: int = 14
+    - seed: long
+    - walls: boolean[][]
+    - obstacles: List<Obstacle>
+    - entrances: List<SpawnPoint>
+    + getObstacles(): List<Obstacle>
+    + getEntrances(): List<SpawnPoint>
+    + isBlocked(x: double, y: double, radius: double): boolean
+    + damageBarricade(column: int, row: int, damage: int): void
+    + distanceField(column: int, row: int): int[][]
   }
   class GameState {
-    -wave: int
+    - player: Player
+    - map: GameMap
+    - enemies: List<Enemy>
+    - projectiles: List<Projectile>
+    - wave: int
+    + advanceWave(): void
+    + changeMap(map: GameMap): void
   }
-  class MapGenerator { +generate(seed): GameMap }
+  class MapGenerator {
+    + generate(): GameMap
+    + generate(seed: long): GameMap
+  }
   class WaveManager {
-    +startWave(state)
-    +update(state)
+    - remainingToSpawn: int
+    + startWave(state: GameState): void
+    + update(state: GameState): void
+    + getRemainingToSpawn(): int
+    + restoreRemainingToSpawn(count: int): void
   }
-  class ShopManager { +buy(state, item): String }
-  class GameStatus <<enumeration>>
-  class Weapon <<record>>
-  class "SpawnPoint" as SpawnPoint <<record>>
+  class ShopManager {
+    + buy(state: GameState, item: Item): String
+  }
+  enum Item {
+    SMG
+    RIFLE
+    DAMAGE
+    RATE
+    HEAL
+  }
+  enum GameStatus {
+    MENU
+    PLAYING
+    SHOP
+    PAUSED
+    GAME_OVER
+    SCORES
+    HELP
+  }
+  class Weapon <<record>> {
+    + name: String
+    + damage: int
+    + cooldownMs: int
+    + pistol(): Weapon
+    + smg(): Weapon
+    + rifle(): Weapon
+  }
+  class SpawnPoint <<record>> {
+    + column: int
+    + row: int
+    + type: SpawnType
+  }
   enum SpawnType {
     WINDOW
     LADDER
@@ -68,51 +153,86 @@ package model {
   GameState *-- "0..*" Enemy
   GameState *-- "0..*" Projectile
   GameMap *-- "0..*" Obstacle
-  GameMap o-- "4 windows + 1 ladder" SpawnPoint
+  GameMap o-- "4 fenêtres + 1 échelle" SpawnPoint
   SpawnPoint --> SpawnType
   Player --> Weapon
-  MapGenerator ..> GameMap
+  ShopManager ..> Item
 }
 
-package controller {
-  class GameEngine
-  GameEngine --> GameState
-  GameEngine --> WaveManager
-  GameEngine --> ShopManager
-  GameEngine --> GameStatus
+package "survivalgame" as app {
+  class Main
 }
 
-package input {
+package "survivalgame.controller" as controller {
+  class GameEngine {
+    - state: GameState
+    - status: GameStatus
+    - lastShotTime: long
+    + getState(): GameState
+    + getStatus(): GameStatus
+    + setStatus(status: GameStatus): void
+    + startNewGame(): void
+    + saveGame(): void
+    + loadGame(): void
+    + startNextWave(): void
+    + purchase(item: Item): String
+    + update(dx: double, dy: double, aim: Point2D, shooting: boolean): void
+  }
+}
+
+package "survivalgame.input" as input {
   class KeyboardInput
-  class MouseInput
+  class MouseInput {
+    - x: double
+    - y: double
+    - shooting: boolean
+    + getAim(): Point2D.Double
+    + isShooting(): boolean
+  }
 }
 
-package view {
+package "survivalgame.view" as view {
   class MainWindow
   class GamePanel
   class GameRenderer
   class SpriteAtlas
   MainWindow *-- GamePanel
-  GamePanel --> GameEngine
-  GamePanel --> KeyboardInput
-  GamePanel --> MouseInput
+  GamePanel --> controller.GameEngine
+  GamePanel --> input.KeyboardInput
+  GamePanel --> input.MouseInput
   GamePanel --> GameRenderer
   GameRenderer --> SpriteAtlas
 }
 
-package persistence {
-  class ScoreManager
-  class ScoreEntry <<record>>
-  class GameSaveManager
+package "survivalgame.persistence" as persistence {
+  class ScoreManager {
+    + getTopScores(): List<ScoreEntry>
+    + addScore(name: String, score: int): void
+  }
+  class ScoreEntry <<record>> {
+    + name: String
+    + score: int
+  }
+  class GameSaveManager {
+    + save(state: GameState, remainingToSpawn: int): void
+    + load(): SavedGame
+  }
   class SavedGame <<record>> {
-    +state: GameState
-    +remainingToSpawn: int
+    + state: GameState
+    + remainingToSpawn: int
   }
   ScoreManager --> "0..*" ScoreEntry
-  GameEngine --> ScoreManager
-  GameEngine --> GameSaveManager
   GameSaveManager ..> SavedGame : charge
-  GameSaveManager ..> GameState : restaure
-  SavedGame *-- GameState
+  GameSaveManager ..> model.GameState : restaure
+  SavedGame *-- model.GameState
 }
+
+app.Main ..> view.MainWindow
+controller.GameEngine --> model.GameState
+controller.GameEngine --> model.GameStatus
+controller.GameEngine --> model.WaveManager
+controller.GameEngine --> model.ShopManager
+controller.GameEngine --> persistence.ScoreManager
+controller.GameEngine --> persistence.GameSaveManager
+persistence.GameSaveManager ..> model.GameMap : regénère depuis seed
 @enduml

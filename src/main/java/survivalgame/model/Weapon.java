@@ -1,9 +1,11 @@
 package survivalgame.model;
 
-/** Paramètres immuables d'une arme.
+/**
+ * Paramètres immuables d'une arme.
  * @param name nom affiché
  * @param damage dégâts par projectile
  * @param cooldownMs délai entre deux tirs en millisecondes
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
  */
 public record Weapon(String name, int damage, int cooldownMs) {
     /** Retourne l'arme de départ.

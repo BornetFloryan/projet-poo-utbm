@@ -2,7 +2,10 @@ package survivalgame.model;
 
 import java.awt.geom.Rectangle2D;
 
-/** Élément mobile de la partie, exprimé dans les coordonnées locales de l'arène. */
+/**
+ * Élément mobile de la partie, exprimé dans les coordonnées locales de l'arène.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public abstract class Entity {
     private double x;
     private double y;

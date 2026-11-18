@@ -1,6 +1,9 @@
 package survivalgame.model;
 
-/** Entité vivante dotée de points de vie, d'une vitesse et d'un rayon de collision. */
+/**
+ * Entité vivante dotée de points de vie, d'une vitesse et d'un rayon de collision.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public abstract class Character extends Entity {
     private int health;
     private final int maxHealth;

@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** Arène en grille, obstacles, entrées de fenêtres et navigation BFS. */
+/**
+ * Arène en grille, obstacles, entrées de fenêtres et navigation BFS.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class GameMap {
     /** Taille d'une case en pixels. */
     public static final int TILE_SIZE = 32;

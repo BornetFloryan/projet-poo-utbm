@@ -1,6 +1,9 @@
 package survivalgame.model;
 
-/** Personnage contrôlé par le joueur : vie, score, crédits et arme. */
+/**
+ * Personnage contrôlé par le joueur : vie, score, crédits et arme.
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class Player extends Character {
     private int score;
     private int credits;

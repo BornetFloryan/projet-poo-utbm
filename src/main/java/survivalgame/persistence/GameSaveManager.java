@@ -21,7 +21,10 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Properties;
 
-/** Persiste une partie complète dans le fichier savegame.properties. */
+/**
+ * Persiste une partie complète dans le fichier savegame.properties.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class GameSaveManager {
     private static final String FILE_NAME = "savegame.properties";
     private static final String VERSION = "2";

@@ -3,7 +3,10 @@ package survivalgame.view;
 import javax.swing.JFrame;
 import java.awt.Dimension;
 
-/** Fenêtre Swing principale. */
+/**
+ * Fenêtre Swing principale.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class MainWindow extends JFrame {
     private static final long serialVersionUID = 1L;
 

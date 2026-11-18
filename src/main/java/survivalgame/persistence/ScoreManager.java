@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-/** Lit et enregistre les meilleurs scores dans highscores.txt. */
+/**
+ * Lit et enregistre les meilleurs scores dans highscores.txt.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class ScoreManager {
     private final Path file = Path.of("highscores.txt");
 

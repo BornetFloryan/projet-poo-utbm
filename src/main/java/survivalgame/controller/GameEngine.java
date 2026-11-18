@@ -18,7 +18,10 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-/** Coordonne les entrées de jeu, la simulation, les vagues et les achats. */
+/**
+ * Coordonne les entrées de jeu, la simulation, les vagues et les achats.  *
+ * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
+ */
 public final class GameEngine {
     /** Crée le contrôleur et les services d'une session. */
     public GameEngine() { }
