@@ -36,4 +36,4 @@ Le script compile avec `javac` dans `out/` puis lance `survivalgame.Main`. En ID
 
 La carte fait 22 × 14 tuiles. Elle a quatre fenêtres barricadées et une échelle intérieure dont les positions varient d'une carte à l'autre. Une nouvelle carte apparaît toutes les trois vagues. Les zombies essaient de passer par les fenêtres et attaquent les barricades lorsqu'elles bloquent leur chemin ; le joueur peut aussi les détruire. Les sprites mobiles pivotent vers leur direction de visée ou de déplacement.
 
-Le PDF de modalités fourni et le diagramme UML d'origine sont conservés à côté de ce README. Le diagramme PlantUML reflète les classes et les packages du projet et peut être importé dans draw.io.
+Le diagramme PlantUML reflète les classes et les packages du projet et peut être importé dans draw.io.
