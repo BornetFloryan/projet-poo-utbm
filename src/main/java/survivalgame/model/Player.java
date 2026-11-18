@@ -18,17 +18,6 @@ public final class Player extends Character {
         return true;
     }
     public void setWeapon(Weapon weapon) { this.weapon = weapon; }
-
-    /** Restaure les attributs persistés d'un joueur après validation de leurs bornes. */
-    public void restoreProgress(int health, int score, int credits, Weapon weapon) {
-        if (health < 1 || health > getMaxHealth() || score < 0 || credits < 0) {
-            throw new IllegalArgumentException("La sauvegarde contient une progression invalide.");
-        }
-        restoreHealth(health);
-        this.score = score;
-        this.credits = credits;
-        this.weapon = weapon;
-    }
     public void healPlayer(int amount) { heal(amount); }
     public void receiveContactDamage(long now) {
         if (now - lastDamageTime >= 850) {
