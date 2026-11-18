@@ -12,10 +12,12 @@ import java.io.InputStream;
  * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
  */
 final class SpriteAtlas {
+    /** Types de textures pouvant être découpées depuis l’atlas. */
     enum Sprite { FLOOR, BRICK, WINDOW, SANDBAG, PLAYER, ZOMBIE, FAST_ZOMBIE, BULLET }
 
     private final Map<Sprite, BufferedImage> sprites = new EnumMap<>(Sprite.class);
 
+    /** Initialise l’atlas en chargeant puis découpant l’image globale. */
     SpriteAtlas() {
         try (InputStream input = SpriteAtlas.class.getResourceAsStream("/images/arena-atlas.png")) {
             if (input == null) throw new IOException("images/arena-atlas.png introuvable");
@@ -27,10 +29,18 @@ final class SpriteAtlas {
         }
     }
 
+    /** Retourne l’image associée à un type de sprite.
+     * @param sprite type demandé
+     * @return image découpée correspondante
+     */
     BufferedImage get(Sprite sprite) {
         return sprites.get(sprite);
     }
 
+    /**
+     * Découpe l'atlas chargé afin d'associer chaque sprite à son image individuelle.
+     * @param atlas image globale contenant toutes les textures du jeu
+     */
     private void extractSprites(BufferedImage atlas) {
         for (Sprite sprite : Sprite.values()) {
             int[] bounds = switch (sprite) {

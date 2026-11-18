@@ -38,6 +38,12 @@ public abstract class Enemy extends Character {
         attackBarricadeIfBlocked(state.getMap(), next[0], next[1]);
     }
 
+    /** Recherche la case voisine la plus proche du joueur.
+     * @param distances champ de distance vers la cible
+     * @param column colonne actuelle
+     * @param row ligne actuelle
+     * @return coordonnées de la meilleure voisine, ou null si aucune n'est accessible
+     */
     private int[] closestNeighbour(int[][] distances, int column, int row) {
         int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         int bestDistance = distanceAt(distances, column, row);
@@ -54,11 +60,22 @@ public abstract class Enemy extends Character {
         return best;
     }
 
+    /** Retourne la distance d'une case, ou -1 si elle est hors du champ.
+     * @param distances champ de distance
+     * @param x colonne recherchée
+     * @param y ligne recherchée
+     * @return distance disponible
+     */
     private int distanceAt(int[][] distances, int x, int y) {
         if (y < 0 || y >= distances.length || x < 0 || x >= distances[0].length) return -1;
         return distances[y][x];
     }
 
+    /** Déplace l'ennemi sur un axe et annule le mouvement en cas de collision.
+     * @param map carte active
+     * @param dx déplacement horizontal
+     * @param dy déplacement vertical
+     */
     private void moveOnAxis(GameMap map, double dx, double dy) {
         double oldX = getX();
         double oldY = getY();
@@ -70,6 +87,11 @@ public abstract class Enemy extends Character {
         }
     }
 
+    /** Endommage la barricade devant l'ennemi selon une cadence limitée.
+     * @param map carte active
+     * @param targetColumn colonne de la barricade
+     * @param targetRow ligne de la barricade
+     */
     private void attackBarricadeIfBlocked(GameMap map, int targetColumn, int targetRow) {
         if (!map.hasBarricade(targetColumn, targetRow)) return;
         long now = System.currentTimeMillis();

@@ -57,6 +57,9 @@ public final class MouseInput extends MouseAdapter {
         if (SwingUtilities.isLeftMouseButton(event)) shooting = false;
     }
 
+    /** Convertit les coordonnées écran de l'événement dans le repère logique de la carte.
+     * @param event événement souris fourni par Swing
+     */
     private void update(MouseEvent event) {
         x = (event.getX() - offsetX) / scale - mapOffsetX;
         y = (event.getY() - offsetY) / scale - mapOffsetY;

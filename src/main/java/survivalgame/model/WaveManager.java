@@ -51,6 +51,9 @@ public final class WaveManager {
         remainingToSpawn--;
     }
 
+    /** Fait apparaître un ennemi à une entrée choisie selon la difficulté.
+     * @param state état actuel de la partie
+     */
     private void spawnEnemy(GameState state) {
         GameMap map = state.getMap();
         GameMap.SpawnPoint entrance = map.getEntrances().get(random.nextInt(map.getEntrances().size()));

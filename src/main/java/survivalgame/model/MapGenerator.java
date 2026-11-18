@@ -34,6 +34,10 @@ public final class MapGenerator {
         return fallback;
     }
 
+    /** Construit les limites extérieures, les quatre fenêtres et leurs barricades.
+     * @param map carte à modifier
+     * @param random générateur aléatoire
+     */
     private void buildBoundaryAndWindows(GameMap map, Random random) {
         int topColumn = random.nextInt(3, GameMap.COLUMNS - 3);
         int bottomColumn = differentValue(random, 3, GameMap.COLUMNS - 3, topColumn);
@@ -77,6 +81,13 @@ public final class MapGenerator {
         map.addBoundaryWall(GameMap.COLUMNS - 2, rightRow + 1);
     }
 
+    /** Choisit une valeur différente d'une valeur exclue.
+     * @param random générateur aléatoire
+     * @param minimum borne minimale inclusive
+     * @param maximum borne maximale exclusive
+     * @param excluded valeur à éviter
+     * @return valeur aléatoire différente
+     */
     private int differentValue(Random random, int minimum, int maximum, int excluded) {
         int value;
         do { value = random.nextInt(minimum, maximum); }
@@ -84,6 +95,10 @@ public final class MapGenerator {
         return value;
     }
 
+    /** Ajoute une disposition aléatoire d'obstacles intérieurs.
+     * @param map carte à modifier
+     * @param random générateur aléatoire
+     */
     private void addRandomCover(GameMap map, Random random) {
         for (int count = 0; count < 30; count++) {
             int column = 2 + random.nextInt(GameMap.COLUMNS - 4);
@@ -94,6 +109,10 @@ public final class MapGenerator {
         }
     }
 
+    /** Recherche une position libre pour le point d'apparition intérieur.
+     * @param map carte à modifier
+     * @param random générateur aléatoire
+     */
     private void addLadderSpawn(GameMap map, Random random) {
         for (int attempt = 0; attempt < 100; attempt++) {
             int column = random.nextInt(3, GameMap.COLUMNS - 3);
@@ -117,6 +136,10 @@ public final class MapGenerator {
         }
     }
 
+    /** Vérifie que toutes les cases libres restent accessibles depuis le centre.
+     * @param map carte examinée
+     * @return vrai si la carte est complètement connexe
+     */
     private boolean isConnected(GameMap map) {
         int[][] distances = map.distanceField(GameMap.COLUMNS / 2, GameMap.ROWS / 2);
         for (int row = 1; row < GameMap.ROWS - 1; row++) {

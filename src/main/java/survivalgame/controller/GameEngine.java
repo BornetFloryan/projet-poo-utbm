@@ -90,6 +90,10 @@ public final class GameEngine {
         status = GameStatus.PLAYING;
     }
 
+    /** Génère une nouvelle carte différente des points d'apparition précédents.
+     * @param previousMap carte actuelle
+     * @return nouvelle carte compatible avec les règles du jeu
+     */
     private GameMap generateDifferentMap(GameMap previousMap) {
         long seed = previousMap.getSeed() + 1;
         GameMap replacement;
@@ -99,6 +103,11 @@ public final class GameEngine {
         return replacement;
     }
 
+    /** Vérifie si deux cartes utilisent exactement les mêmes entrées.
+     * @param first première carte
+     * @param second seconde carte
+     * @return vrai si les emplacements d'apparition sont identiques
+     */
     private boolean hasSameSpawnLocations(GameMap first, GameMap second) {
         return first.getEntrances().equals(second.getEntrances());
     }
@@ -130,11 +139,21 @@ public final class GameEngine {
         updateStatus(player);
     }
 
+    /** Déplace le joueur séparément sur les deux axes pour éviter les collisions.
+     * @param player joueur à déplacer
+     * @param dx déplacement horizontal
+     * @param dy déplacement vertical
+     */
     private void movePlayer(Player player, double dx, double dy) {
         moveOnAxis(player, dx, 0);
         moveOnAxis(player, 0, dy);
     }
 
+    /** Tente un déplacement sur un axe et annule toute collision.
+     * @param player joueur à déplacer
+     * @param dx déplacement horizontal
+     * @param dy déplacement vertical
+     */
     private void moveOnAxis(Player player, double dx, double dy) {
         double oldX = player.getX();
         double oldY = player.getY();
@@ -144,6 +163,11 @@ public final class GameEngine {
         }
     }
 
+    /** Crée un projectile si le tir est autorisé par la cadence et la limite active.
+     * @param player joueur qui tire
+     * @param aim position visée
+     * @param shooting indique si le tir est maintenu
+     */
     private void updateShooting(Player player, Point2D aim, boolean shooting) {
         long now = System.currentTimeMillis();
         if (!shooting || now - lastShotTime < player.getWeapon().cooldownMs()
@@ -157,6 +181,9 @@ public final class GameEngine {
         lastShotTime = now;
     }
 
+    /** Met à jour les ennemis et applique les dégâts de contact au joueur.
+     * @param distances champ de distance vers le joueur
+     */
     private void updateEnemies(int[][] distances) {
         Player player = state.getPlayer();
         long now = System.currentTimeMillis();
@@ -166,6 +193,9 @@ public final class GameEngine {
         }
     }
 
+    /** Avance les projectiles, traite les obstacles et les collisions avec les ennemis.
+     * @param distances champ de distance utilisé par les entités
+     */
     private void updateProjectiles(int[][] distances) {
         List<Projectile> projectiles = state.getProjectiles();
         Iterator<Projectile> iterator = projectiles.iterator();
@@ -189,12 +219,20 @@ public final class GameEngine {
         }
     }
 
+    /** Indique si un projectile est sorti des limites de la carte.
+     * @param projectile projectile à contrôler
+     * @return vrai lorsque le projectile est hors de la carte
+     */
     private boolean outsideMap(Projectile projectile) {
         return projectile.getX() < 0 || projectile.getY() < 0
                 || projectile.getX() >= state.getMap().getPixelWidth()
                 || projectile.getY() >= state.getMap().getPixelHeight();
     }
 
+    /** Détermine si un projectile touche une barricade ou un obstacle solide.
+     * @param projectile projectile contrôlé
+     * @return vrai si le projectile doit être supprimé après collision
+     */
     private boolean damageObstacle(Projectile projectile) {
         GameMap map = state.getMap();
         int column = (int) (projectile.getX() / GameMap.TILE_SIZE);
@@ -206,6 +244,10 @@ public final class GameEngine {
         return map.isBlocked(projectile.getX(), projectile.getY(), 2);
     }
 
+    /** Recherche un ennemi touché par un projectile.
+     * @param projectile projectile tiré
+     * @return ennemi touché, ou null si aucun coup n'a été effectué
+     */
     private Enemy findHitEnemy(Projectile projectile) {
         for (Enemy enemy : state.getEnemies()) {
             if (Math.hypot(projectile.getX() - enemy.getX(),
@@ -214,12 +256,18 @@ public final class GameEngine {
         return null;
     }
 
+    /** Attribue la récompense d'un ennemi détruit et le retire de la partie.
+     * @param enemy ennemi éliminé
+     */
     private void rewardAndRemove(Enemy enemy) {
         state.getPlayer().addReward(enemy instanceof FastZombie ? 20 : 10,
                 enemy instanceof FastZombie ? 12 : 8);
         state.getEnemies().remove(enemy);
     }
 
+    /** Met à jour l'état général après les morts ou l'élimination de la vague.
+     * @param player joueur de la partie
+     */
     private void updateStatus(Player player) {
         if (player.isDead()) status = GameStatus.GAME_OVER;
         else if (state.getEnemies().isEmpty() && waveManager.getRemainingToSpawn() == 0) {

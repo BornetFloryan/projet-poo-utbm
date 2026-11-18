@@ -63,6 +63,11 @@ public final class GameMap {
         addWall(column, row, true);
     }
 
+    /** Ajoute un mur intérieur ou une limite selon le paramètre demandé.
+     * @param column colonne de la case
+     * @param row ligne de la case
+     * @param boundary indique si le mur constitue une limite extérieure
+     */
     private void addWall(int column, int row, boolean boundary) {
         if (!inside(column, row) || walls[row][column]) return;
         walls[row][column] = true;
@@ -113,6 +118,11 @@ public final class GameMap {
                 || solidAt(x - radius, y + radius) || solidAt(x + radius, y + radius);
     }
 
+    /** Vérifie la présence d'un obstacle à un point précis en tenant compte des limites.
+     * @param x abscisse du point
+     * @param y ordonnée du point
+     * @return vrai si le point est solide
+     */
     private boolean solidAt(double x, double y) {
         int column = (int) (x / TILE_SIZE);
         int row = (int) (y / TILE_SIZE);
@@ -167,11 +177,21 @@ public final class GameMap {
         return distances;
     }
 
+    /** Ignore les murs et barricades, puis détecte tout autre obstacle.
+     * @param x colonne recherchée
+     * @param y ligne recherchée
+     * @return vrai si un obstacle non barricade occupe la case
+     */
     private boolean hasNonBarricadeObstacle(int x, int y) {
         return obstacles.stream().anyMatch(o -> o.getColumn() == x && o.getRow() == y
                 && !(o instanceof Barricade));
     }
 
+    /** Indique si des coordonnées entières appartiennent à la grille.
+     * @param column colonne recherchée
+     * @param row ligne recherchée
+     * @return vrai si la case est intérieure à la carte
+     */
     private boolean inside(int column, int row) {
         return column >= 0 && row >= 0 && column < COLUMNS && row < ROWS;
     }

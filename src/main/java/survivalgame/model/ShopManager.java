@@ -34,6 +34,10 @@ public final class ShopManager {
         return "Achat effectué.";
     }
 
+    /** Retourne le prix en crédits d'un article.
+     * @param item article concerné
+     * @return coût de l'article
+     */
     private int priceOf(Item item) {
         return switch (item) {
             case SMG -> 35;
@@ -43,6 +47,10 @@ public final class ShopManager {
         };
     }
 
+    /** Applique immédiatement l'effet d'un achat validé.
+     * @param player joueur bénéficiant de l'achat
+     * @param item article acheté
+     */
     private void applyPurchase(Player player, Item item) {
         Weapon current = player.getWeapon();
         switch (item) {

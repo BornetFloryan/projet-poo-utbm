@@ -122,6 +122,10 @@ public final class GameSaveManager {
         }
     }
 
+    /** Écrit les propriétés dans un fichier temporaire puis remplace la sauvegarde actuelle.
+     * @param data propriétés à enregistrer
+     * @throws IOException si l'écriture ou le remplacement échoue
+     */
     private void writeAtomically(Properties data) throws IOException {
         Path absoluteFile = file.toAbsolutePath();
         Path directory = absoluteFile.getParent();
@@ -141,6 +145,11 @@ public final class GameSaveManager {
         }
     }
 
+    /** Sérialise un ennemi avec son type, sa position et sa vie.
+     * @param data propriétés de sauvegarde
+     * @param index numéro de l'ennemi
+     * @param enemy ennemi à enregistrer
+     */
     private void writeEnemy(Properties data, int index, Enemy enemy) {
         String prefix = "enemies." + index + ".";
         data.setProperty(prefix + "type", enemy instanceof FastZombie ? "fast" : "normal");
@@ -150,6 +159,11 @@ public final class GameSaveManager {
         data.setProperty(prefix + "health", Integer.toString(enemy.getHealth()));
     }
 
+    /** Sérialise un projectile actif avec sa vitesse et sa portée restante.
+     * @param data propriétés de sauvegarde
+     * @param index numéro du projectile
+     * @param projectile projectile à enregistrer
+     */
     private void writeProjectile(Properties data, int index, Projectile projectile) {
         String prefix = "projectiles." + index + ".";
         data.setProperty(prefix + "x", Double.toString(projectile.getX()));
@@ -160,6 +174,11 @@ public final class GameSaveManager {
         data.setProperty(prefix + "range", Double.toString(projectile.getRemainingRange()));
     }
 
+    /** Restaure la progression et la position du joueur depuis les propriétés.
+     * @param data propriétés chargées
+     * @param player joueur à modifier
+     * @param map carte régénérée
+     */
     private void restorePlayer(Properties data, Player player, GameMap map) {
         double x = finiteDouble(data, "player.x");
         double y = finiteDouble(data, "player.y");
@@ -176,6 +195,10 @@ public final class GameSaveManager {
         player.setFacingAngle(angle);
     }
 
+    /** Restaure la liste des ennemis validés depuis une sauvegarde.
+     * @param data propriétés chargées
+     * @param state partie à compléter
+     */
     private void restoreEnemies(Properties data, GameState state) {
         int count = boundedInt(data, "enemies.count", 0, MAX_ENEMIES);
         for (int i = 0; i < count; i++) {
@@ -197,6 +220,11 @@ public final class GameSaveManager {
         }
     }
 
+    /** Restaure les projectiles actifs depuis une sauvegarde.
+     * @param data propriétés chargées
+     * @param state partie à compléter
+     * @param map carte régénérée
+     */
     private void restoreProjectiles(Properties data, GameState state, GameMap map) {
         int count = boundedInt(data, "projectiles.count", 0, MAX_PROJECTILES);
         for (int i = 0; i < count; i++) {
@@ -212,6 +240,10 @@ public final class GameSaveManager {
         }
     }
 
+    /** Restaure l'intégrité et la résistance de toutes les barricades.
+     * @param data propriétés chargées
+     * @param map carte régénérée
+     */
     private void restoreBarricades(Properties data, GameMap map) {
         List<GameMap.SpawnPoint> windows = windowEntrances(map);
         int count = boundedInt(data, "barricades.count", 0, GameMap.COLUMNS + GameMap.ROWS);
@@ -228,6 +260,11 @@ public final class GameSaveManager {
         }
     }
 
+    /** Retourne la durabilité restante d'une barricade devant une fenêtre.
+     * @param map carte contenant la barricade
+     * @param window entrée de fenêtre concernée
+     * @return durabilité comprise entre zéro et quatre
+     */
     private int barricadeDurability(GameMap map, GameMap.SpawnPoint window) {
         int[] tile = barricadeTile(window);
         return map.getObstacles().stream()
@@ -239,12 +276,20 @@ public final class GameSaveManager {
                 .findFirst().orElse(0);
     }
 
+    /** Filtre les entrées de carte correspondant aux fenêtres extérieures.
+     * @param map carte examinée
+     * @return liste des points de fenêtre
+     */
     private List<GameMap.SpawnPoint> windowEntrances(GameMap map) {
         return map.getEntrances().stream()
                 .filter(entrance -> entrance.type() == GameMap.SpawnType.WINDOW)
                 .toList();
     }
 
+    /** Convertit une fenêtre en coordonnées de sa barricade intérieure.
+     * @param window point d'apparition de fenêtre
+     * @return colonne et ligne de la barricade
+     */
     private int[] barricadeTile(GameMap.SpawnPoint window) {
         if (window.row() == 0) return new int[]{window.column(), 1};
         if (window.row() == GameMap.ROWS - 1) {
@@ -254,16 +299,34 @@ public final class GameSaveManager {
         return new int[]{GameMap.COLUMNS - 2, window.row()};
     }
 
+    /** Vérifie qu'une position reste à l'intérieur de la carte.
+     * @param x abscisse
+     * @param y ordonnée
+     * @param map carte à contrôler
+     * @param name nom de l'entité utilisé dans le message d'erreur
+     */
     private void requireInsideMap(double x, double y, GameMap map, String name) {
         if (x < 0 || y < 0 || x >= map.getPixelWidth() || y >= map.getPixelHeight()) {
             throw new IllegalArgumentException("Position de " + name + " hors de la carte.");
         }
     }
 
+    /** Lit un entier strictement positif dans les propriétés.
+     * @param data propriétés chargées
+     * @param key clé recherchée
+     * @return valeur entière positive
+     */
     private int positiveInt(Properties data, String key) {
         return boundedInt(data, key, 1, Integer.MAX_VALUE);
     }
 
+    /** Lit un entier borné dans les propriétés.
+     * @param data propriétés chargées
+     * @param key clé recherchée
+     * @param minimum borne minimale incluse
+     * @param maximum borne maximale incluse
+     * @return valeur entière validée
+     */
     private int boundedInt(Properties data, String key, int minimum, int maximum) {
         int value;
         try {
@@ -277,6 +340,11 @@ public final class GameSaveManager {
         return value;
     }
 
+    /** Lit un entier long dans les propriétés.
+     * @param data propriétés chargées
+     * @param key clé recherchée
+     * @return valeur longue validée
+     */
     private long longValue(Properties data, String key) {
         try {
             return Long.parseLong(required(data, key));
@@ -285,6 +353,11 @@ public final class GameSaveManager {
         }
     }
 
+    /** Lit un nombre décimal fini dans les propriétés.
+     * @param data propriétés chargées
+     * @param key clé recherchée
+     * @return nombre décimal fini
+     */
     private double finiteDouble(Properties data, String key) {
         double value;
         try {
@@ -298,6 +371,13 @@ public final class GameSaveManager {
         return value;
     }
 
+    /** Lit un nombre décimal borné dans les propriétés.
+     * @param data propriétés chargées
+     * @param key clé recherchée
+     * @param minimum borne minimale incluse
+     * @param maximum borne maximale incluse
+     * @return nombre décimal validé
+     */
     private double boundedDouble(Properties data, String key, double minimum, double maximum) {
         double value = finiteDouble(data, key);
         if (value < minimum || value > maximum) {
@@ -306,6 +386,11 @@ public final class GameSaveManager {
         return value;
     }
 
+    /** Retourne une valeur textuelle non vide depuis les propriétés.
+     * @param data propriétés chargées
+     * @param key clé recherchée
+     * @return valeur texte validée
+     */
     private String required(Properties data, String key) {
         String value = data.getProperty(key);
         if (value == null || value.isBlank()) {

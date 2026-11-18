@@ -45,6 +45,10 @@ public final class ScoreManager {
                 StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
     }
 
+    /** Charge, valide et trie les scores enregistrés dans le fichier courant.
+     * @return liste triée des meilleurs scores
+     * @throws IOException si le fichier ne peut pas être lu
+     */
     private List<ScoreEntry> loadScores() throws IOException {
         List<ScoreEntry> scores = new ArrayList<>();
         if (!Files.exists(file)) return scores;

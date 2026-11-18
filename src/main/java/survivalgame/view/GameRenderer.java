@@ -26,6 +26,14 @@ final class GameRenderer {
     static final int HEIGHT = 640;
     private final SpriteAtlas sprites = new SpriteAtlas();
 
+    /** Dessine l'écran actif avec la partie, le classement et les notifications courants.
+     * @param graphics contexte graphique
+     * @param status état de l'interface
+     * @param state partie active
+     * @param scores scores à afficher
+     * @param scoreError erreur éventuelle de lecture
+     * @param notice message temporaire
+     */
     void draw(Graphics2D graphics, GameStatus status, GameState state,
               List<ScoreEntry> scores, String scoreError, String notice) {
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -51,9 +59,22 @@ final class GameRenderer {
         if (notice != null && !notice.isBlank()) drawCentered(graphics, notice, 615, 15, new Color(255, 218, 126));
     }
 
+    /** Calcule le décalage horizontal centré de la carte.
+     * @param map carte à afficher
+     * @return décalage horizontal en pixels
+     */
     int getMapOffsetX(GameMap map) { return (WIDTH - map.getPixelWidth()) / 2; }
+
+    /** Calcule le décalage vertical centré de la carte.
+     * @param map carte à afficher
+     * @return décalage vertical en pixels
+     */
     int getMapOffsetY(GameMap map) { return (HEIGHT - map.getPixelHeight()) / 2; }
 
+    /** Dessine la carte, les entités, les projectiles et l'interface de partie.
+     * @param g contexte graphique
+     * @param state partie active
+     */
     private void drawGame(Graphics2D g, GameState state) {
         if (state == null) return;
         GameMap map = state.getMap();
@@ -88,6 +109,12 @@ final class GameRenderer {
         drawHud(g, state);
     }
 
+    /** Dessine un obstacle avec son apparence et, si nécessaire, sa barre de résistance.
+     * @param g contexte graphique
+     * @param obstacle obstacle à représenter
+     * @param mapX décalage horizontal de la carte
+     * @param mapY décalage vertical de la carte
+     */
     private void drawObstacle(Graphics2D g, Obstacle obstacle, int mapX, int mapY) {
         int x = mapX + obstacle.getColumn() * GameMap.TILE_SIZE;
         int y = mapY + obstacle.getRow() * GameMap.TILE_SIZE;
@@ -102,6 +129,15 @@ final class GameRenderer {
         }
     }
 
+    /** Dessine une entité tournée selon son orientation.
+     * @param g contexte graphique
+     * @param sprite image de l'entité
+     * @param entity entité à représenter
+     * @param mapX décalage horizontal
+     * @param mapY décalage vertical
+     * @param width largeur affichée
+     * @param height hauteur affichée
+     */
     private void drawEntity(Graphics2D g, Sprite sprite, survivalgame.model.Entity entity,
                             int mapX, int mapY, int width, int height) {
         int centerX = mapX + (int) entity.getX();
@@ -113,6 +149,11 @@ final class GameRenderer {
         rotated.dispose();
     }
 
+    /** Dessine l'échelle intérieure d'apparition.
+     * @param g contexte graphique
+     * @param x abscisse du haut à gauche
+     * @param y ordonnée du haut à gauche
+     */
     private void drawLadder(Graphics2D g, int x, int y) {
         g.setColor(new Color(7, 10, 15, 150));
         g.fillRoundRect(x + 5, y + 4, 22, 25, 5, 5);
@@ -127,6 +168,12 @@ final class GameRenderer {
         g.drawLine(x + 16, y + 7, x + 16, y + 25);
     }
 
+    /** Dessine la direction de visée du joueur.
+     * @param g contexte graphique
+     * @param player joueur visé
+     * @param mapX décalage horizontal
+     * @param mapY décalage vertical
+     */
     private void drawAim(Graphics2D g, Player player, int mapX, int mapY) {
         double angle = Math.atan2(lastAimY - player.getY(), lastAimX - player.getX());
         int x = mapX + (int) player.getX();
@@ -137,8 +184,16 @@ final class GameRenderer {
 
     private double lastAimX;
     private double lastAimY;
+    /** Met à jour les coordonnées de visée utilisées par le rendu.
+     * @param x abscisse visée
+     * @param y ordonnée visée
+     */
     void setAim(double x, double y) { lastAimX = x; lastAimY = y; }
 
+    /** Dessine les informations de vie, score, vagues et arme.
+     * @param g contexte graphique
+     * @param state partie active
+     */
     private void drawHud(Graphics2D g, GameState state) {
         Player player = state.getPlayer();
         g.setColor(new Color(8, 12, 19, 230));
@@ -157,6 +212,9 @@ final class GameRenderer {
         drawCentered(g, "ZQSD / WASD : bouger     Souris : viser et tirer     Échap : pause", 620, 13, new Color(165, 178, 195));
     }
 
+    /** Dessine l'écran d'accueil.
+     * @param g contexte graphique
+     */
     private void drawMenu(Graphics2D g) {
         drawCentered(g, "SURVIVAL GAME", 140, 42, Color.WHITE);
         drawCentered(g, "ÉDITION ARÈNE", 180, 20, new Color(128, 168, 198));
@@ -165,6 +223,10 @@ final class GameRenderer {
         drawCentered(g, "Survivez. Renforcez les barricades. Tenez le siège.", 560, 17, new Color(155, 171, 190));
     }
 
+    /** Dessine la boutique entre deux vagues.
+     * @param g contexte graphique
+     * @param state partie active
+     */
     private void drawShop(Graphics2D g, GameState state) {
         drawOverlay(g, "LA VAGUE EST TERMINÉE", "Crédits disponibles : " + state.getPlayer().getCredits());
         button(g, "Mitraillette — 35 crédits", 180, 290, 280, 54);
@@ -175,12 +237,21 @@ final class GameRenderer {
         button(g, "Vague suivante", 340, 500, 280, 54);
     }
 
+    /** Dessine l'écran de fin de partie.
+     * @param g contexte graphique
+     * @param state partie terminée
+     */
     private void drawGameOver(Graphics2D g, GameState state) {
         drawGame(g, state);
         drawOverlay(g, "GAME OVER", "Score : " + state.getPlayer().getScore() + "  •  Vague : " + state.getWave());
         drawButtons(g, new String[]{"Enregistrer le score", "Recommencer", "Menu"}, 340, 390, 65);
     }
 
+    /** Dessine le tableau des meilleurs scores.
+     * @param g contexte graphique
+     * @param scores scores enregistrés
+     * @param error erreur éventuelle de chargement
+     */
     private void drawScores(Graphics2D g, List<ScoreEntry> scores, String error) {
         drawCentered(g, "MEILLEURS SCORES", 135, 36, Color.WHITE);
         if (error != null) drawCentered(g, error, 220, 16, new Color(255, 160, 150));
@@ -194,6 +265,9 @@ final class GameRenderer {
         button(g, "Retour", 365, 530, 230, 52);
     }
 
+    /** Dessine l'écran d'aide des commandes.
+     * @param g contexte graphique
+     */
     private void drawHelp(Graphics2D g) {
         drawCentered(g, "COMMANDES", 135, 36, Color.WHITE);
         String[] lines = {"ZQSD ou WASD : déplacement", "Souris : viser — clic gauche maintenu : tirer",
@@ -204,6 +278,11 @@ final class GameRenderer {
         button(g, "Retour", 365, 530, 230, 52);
     }
 
+    /** Dessine un panneau central translucide avec un titre et un sous-titre.
+     * @param g contexte graphique
+     * @param title titre principal
+     * @param subtitle texte secondaire
+     */
     private void drawOverlay(Graphics2D g, String title, String subtitle) {
         g.setColor(new Color(8, 12, 20, 225));
         g.fillRoundRect(100, 175, 760, 390, 18, 18);
@@ -211,10 +290,25 @@ final class GameRenderer {
         drawCentered(g, subtitle, 270, 17, new Color(180, 195, 214));
     }
 
+    /** Dessine une série verticale de boutons.
+     * @param g contexte graphique
+     * @param labels textes des boutons
+     * @param x abscisse gauche
+     * @param y ordonnée du premier bouton
+     * @param gap écart vertical
+     */
     private void drawButtons(Graphics2D g, String[] labels, int x, int y, int gap) {
         for (int i = 0; i < labels.length; i++) button(g, labels[i], x, y + i * gap, 230, 52);
     }
 
+    /** Dessine un bouton avec bordure arrondie et texte centré.
+     * @param g contexte graphique
+     * @param text texte du bouton
+     * @param x abscisse
+     * @param y ordonnée
+     * @param width largeur
+     * @param height hauteur
+     */
     private void button(Graphics2D g, String text, int x, int y, int width, int height) {
         g.setColor(new Color(45, 79, 111));
         g.fillRoundRect(x, y, width, height, 12, 12);
@@ -223,6 +317,14 @@ final class GameRenderer {
         drawText(g, text, x + width / 2, y + height / 2 + 6, 17, Color.WHITE, true);
     }
 
+    /** Dessine un sprite de l'atlas à la taille demandée.
+     * @param g contexte graphique
+     * @param sprite type de sprite
+     * @param x abscisse d'affichage
+     * @param y ordonnée d'affichage
+     * @param width largeur affichée
+     * @param height hauteur affichée
+     */
     private void drawSprite(Graphics2D g, Sprite sprite, int x, int y, int width, int height) {
         BufferedImage image = sprites.get(sprite);
         Object oldInterpolation = g.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
@@ -231,10 +333,26 @@ final class GameRenderer {
         if (oldInterpolation != null) g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, oldInterpolation);
     }
 
+    /** Dessine un texte horizontalement centré.
+     * @param g contexte graphique
+     * @param text texte à afficher
+     * @param y ordonnée
+     * @param size taille de police
+     * @param color couleur du texte
+     */
     private void drawCentered(Graphics2D g, String text, int y, int size, Color color) {
         drawText(g, text, WIDTH / 2, y, size, color, true);
     }
 
+    /** Dessine du texte avec centrage optionnel.
+     * @param g contexte graphique
+     * @param text texte à afficher
+     * @param x abscisse
+     * @param y ordonnée
+     * @param size taille de police
+     * @param color couleur
+     * @param centered vrai pour centrer horizontalement
+     */
     private void drawText(Graphics2D g, String text, int x, int y, int size, Color color, boolean centered) {
         g.setFont(new Font("SansSerif", Font.BOLD, size));
         g.setColor(color);

@@ -69,6 +69,7 @@ public final class GamePanel extends JPanel implements MouseListener {
         timer.start();
     }
 
+    /** Effectue une mise à jour logique et demande le rafraîchissement graphique. */
     private void updateGame() {
         Point2D.Double direction = keyboard.getDirection();
         Point2D.Double aim = mouse.getAim();
@@ -77,6 +78,7 @@ public final class GamePanel extends JPanel implements MouseListener {
         repaint();
     }
 
+    /** Change entre les états pause et jeu lorsque Echap est utilisé. */
     private void togglePause() {
         if (engine.getStatus() == GameStatus.PLAYING) engine.setStatus(GameStatus.PAUSED);
         else if (engine.getStatus() == GameStatus.PAUSED) engine.setStatus(GameStatus.PLAYING);
@@ -102,6 +104,9 @@ public final class GamePanel extends JPanel implements MouseListener {
         graphics.dispose();
     }
 
+    /** Charge les meilleurs scores si l'écran correspondant est affiché.
+     * @return classement disponible ou liste vide
+     */
     private List<ScoreEntry> loadScores() {
         if (engine.getStatus() != GameStatus.SCORES) return List.of();
         if (!scoresNeedReload) return scoreCache;
@@ -116,15 +121,22 @@ public final class GamePanel extends JPanel implements MouseListener {
         return scoreCache;
     }
 
-    @Override public void mouseClicked(MouseEvent event) { handleClick(toLogicalX(event), toLogicalY(event)); }
-    @Override public void mousePressed(MouseEvent event) { }
-    @Override public void mouseReleased(MouseEvent event) { }
-    @Override public void mouseEntered(MouseEvent event) { }
-    @Override public void mouseExited(MouseEvent event) { }
-
+    /** Convertit une abscisse écran en abscisse logique.
+     * @param event événement souris
+     * @return abscisse dans le repère logique
+     */
     private int toLogicalX(MouseEvent event) { return (int) ((event.getX() - offsetX) / scale); }
+
+    /** Convertit une ordonnée écran en ordonnée logique.
+     * @param event événement souris
+     * @return ordonnée dans le repère logique
+     */
     private int toLogicalY(MouseEvent event) { return (int) ((event.getY() - offsetY) / scale); }
 
+    /** Transmet un clic à l'écran actuellement actif.
+     * @param x abscisse logique
+     * @param y ordonnée logique
+     */
     private void handleClick(int x, int y) {
         switch (engine.getStatus()) {
             case MENU -> handleMenuClick(x, y);
@@ -137,6 +149,10 @@ public final class GamePanel extends JPanel implements MouseListener {
         requestFocusInWindow();
     }
 
+    /** Traite les choix du menu principal.
+     * @param x abscisse du clic
+     * @param y ordonnée du clic
+     */
     private void handleMenuClick(int x, int y) {
         if (inside(x, y, 365, 225, 230, 52)) {
             loadGame();
@@ -153,6 +169,8 @@ public final class GamePanel extends JPanel implements MouseListener {
         }
     }
 
+    /** Charge une partie sauvegardée ou affiche son erreur.
+     */
     private void loadGame() {
         try {
             engine.loadGame();
@@ -164,6 +182,10 @@ public final class GamePanel extends JPanel implements MouseListener {
         noticeExpires = System.currentTimeMillis() + 3000;
     }
 
+    /** Traite les boutons de l'écran de pause.
+     * @param x abscisse du clic
+     * @param y ordonnée du clic
+     */
     private void handlePauseClick(int x, int y) {
         if (inside(x, y, 365, 270, 230, 52)) engine.setStatus(GameStatus.PLAYING);
         else if (inside(x, y, 365, 335, 230, 52)) engine.startNewGame();
@@ -171,6 +193,8 @@ public final class GamePanel extends JPanel implements MouseListener {
         else if (inside(x, y, 365, 465, 230, 52)) engine.setStatus(GameStatus.MENU);
     }
 
+    /** Sauvegarde la partie active et prépare le message affiché.
+     */
     private void saveGame() {
         try {
             engine.saveGame();
@@ -181,6 +205,10 @@ public final class GamePanel extends JPanel implements MouseListener {
         noticeExpires = System.currentTimeMillis() + 3000;
     }
 
+    /** Traite les achats proposés entre les vagues.
+     * @param x abscisse du clic
+     * @param y ordonnée du clic
+     */
     private void handleShopClick(int x, int y) {
         if (inside(x, y, 180, 290, 280, 54)) buy(ShopManager.Item.SMG);
         else if (inside(x, y, 500, 290, 280, 54)) buy(ShopManager.Item.RIFLE);
@@ -190,17 +218,26 @@ public final class GamePanel extends JPanel implements MouseListener {
         else if (inside(x, y, 340, 500, 280, 54)) engine.startNextWave();
     }
 
+    /** Traite les actions disponibles sur l'écran de fin.
+     * @param x abscisse du clic
+     * @param y ordonnée du clic
+     */
     private void handleGameOverClick(int x, int y) {
         if (inside(x, y, 340, 390, 280, 52)) saveScore();
         else if (inside(x, y, 340, 455, 280, 52)) engine.startNewGame();
         else if (inside(x, y, 340, 520, 280, 52)) engine.setStatus(GameStatus.MENU);
     }
 
+    /** Demande l'achat d'un article et affiche son résultat.
+     * @param item article demandé
+     */
     private void buy(ShopManager.Item item) {
         notice = engine.purchase(item);
         noticeExpires = System.currentTimeMillis() + 1800;
     }
 
+    /** Demande au joueur son pseudonyme puis enregistre son score.
+     */
     private void saveScore() {
         String name = JOptionPane.showInputDialog(this, "Pseudonyme (1 à 16 caractères) :");
         if (name == null) return;
@@ -214,6 +251,8 @@ public final class GamePanel extends JPanel implements MouseListener {
         noticeExpires = System.currentTimeMillis() + 2500;
     }
 
+    /** Synchronise les décalages de carte avec ceux du rendu graphique.
+     */
     private void updateMouseMapOffset() {
         GameMap map = engine.getState().getMap();
         mapOffsetX = renderer.getMapOffsetX(map);
@@ -221,7 +260,41 @@ public final class GamePanel extends JPanel implements MouseListener {
         mouse.setTransform(scale, offsetX, offsetY, mapOffsetX, mapOffsetY);
     }
 
+    /** Vérifie si un point appartient à une zone rectangulaire.
+     * @param x abscisse du point
+     * @param y ordonnée du point
+     * @param left bord gauche
+     * @param top bord supérieur
+     * @param width largeur
+     * @param height hauteur
+     * @return vrai si le point est dans le rectangle
+     */
     private static boolean inside(int x, int y, int left, int top, int width, int height) {
         return x >= left && x <= left + width && y >= top && y <= top + height;
     }
+
+    /** Gère le clic de souris et délègue à l'écran actif.
+     * @param event événement de souris
+     */
+    @Override public void mouseClicked(MouseEvent event) { handleClick(toLogicalX(event), toLogicalY(event)); }
+
+    /** Méthode Swing appelée lors d'une pression, sans action supplémentaire.
+     * @param event événement de souris
+     */
+    @Override public void mousePressed(MouseEvent event) { }
+
+    /** Méthode Swing appelée lors d'un relâchement, sans action supplémentaire.
+     * @param event événement de souris
+     */
+    @Override public void mouseReleased(MouseEvent event) { }
+
+    /** Méthode Swing appelée lors de l'entrée dans le panneau.
+     * @param event événement de souris
+     */
+    @Override public void mouseEntered(MouseEvent event) { }
+
+    /** Méthode Swing appelée lors de la sortie du panneau.
+     * @param event événement de souris
+     */
+    @Override public void mouseExited(MouseEvent event) { }
 }

@@ -8,6 +8,7 @@ import survivalgame.view.MainWindow;
  * @author BORNET Floryan, CARRARA Tim, VIDY Enzo
  */
 public final class Main {
+    /** Empêche l’instanciation de la classe contenant uniquement le point d’entrée. */
     private Main() { }
 
     /** Lance l'interface Swing sur son thread d'événements.

@@ -48,11 +48,22 @@ public final class KeyboardInput {
         return new Point2D.Double(x, y);
     }
 
+    /** Associe une touche pressée et relâchée aux actions du gestionnaire.
+     * @param component composant recevant les raccourcis
+     * @param label nom lisible de la touche
+     * @param keyCode code Java Swing de la touche
+     */
     private void bindKey(JComponent component, String label, int keyCode) {
         bind(component, "pressed " + label, "press-" + label, () -> pressedKeys.add(keyCode));
         bind(component, "released " + label, "release-" + label, () -> pressedKeys.remove(keyCode));
     }
 
+    /** Configure une entrée clavier et son action associée dans Swing.
+     * @param component composant concerné
+     * @param stroke séquence ou touche à reconnaître
+     * @param name identifiant interne de l'action
+     * @param action comportement à exécuter
+     */
     private void bind(JComponent component, String stroke, String name, Runnable action) {
         component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                 .put(KeyStroke.getKeyStroke(stroke), name);
