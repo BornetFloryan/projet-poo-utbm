@@ -4,6 +4,12 @@ package survivalgame.model;
 public abstract class Enemy extends Character {
     private long lastBarricadeAttack;
 
+    /** Initialise un zombie avec ses paramètres physiques.
+     * @param x abscisse initiale
+     * @param y ordonnée initiale
+     * @param health points de vie
+     * @param speed vitesse de déplacement
+     */
     protected Enemy(double x, double y, int health, double speed) {
         super(x, y, health, speed, 12);
     }

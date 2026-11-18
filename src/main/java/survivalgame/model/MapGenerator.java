@@ -4,8 +4,18 @@ import java.util.Random;
 
 /** Produit des cartes petites, reproductibles et accessibles. */
 public final class MapGenerator {
+    /** Crée un générateur de cartes. */
+    public MapGenerator() { }
+
+    /** Génère une carte avec une graine aléatoire.
+     * @return carte jouable générée
+     */
     public GameMap generate() { return generate(new Random().nextLong()); }
 
+    /** Génère une carte reproductible à partir d'une graine.
+     * @param seed graine pseudo-aléatoire
+     * @return carte jouable générée
+     */
     public GameMap generate(long seed) {
         Random random = new Random(seed);
         for (int attempt = 0; attempt < 40; attempt++) {

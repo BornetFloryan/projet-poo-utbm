@@ -16,6 +16,16 @@ public final class MouseInput extends MouseAdapter {
     private double mapOffsetX;
     private double mapOffsetY;
 
+    /** Crée un gestionnaire de visée et de tir. */
+    public MouseInput() { }
+
+    /** Met à jour l'échelle et les décalages entre écran et carte.
+     * @param scale échelle d'affichage
+     * @param offsetX marge horizontale
+     * @param offsetY marge verticale
+     * @param mapOffsetX décalage horizontal de la carte
+     * @param mapOffsetY décalage vertical de la carte
+     */
     public void setTransform(double scale, double offsetX, double offsetY,
                              double mapOffsetX, double mapOffsetY) {
         this.scale = scale;
@@ -25,7 +35,13 @@ public final class MouseInput extends MouseAdapter {
         this.mapOffsetY = mapOffsetY;
     }
 
+    /** Retourne la position de visée dans le repère de la carte.
+     * @return coordonnées de visée
+     */
     public Point2D.Double getAim() { return new Point2D.Double(x, y); }
+    /** Indique si le bouton gauche est maintenu.
+     * @return vrai pendant le tir
+     */
     public boolean isShooting() { return shooting; }
 
     @Override public void mouseMoved(MouseEvent event) { update(event); }

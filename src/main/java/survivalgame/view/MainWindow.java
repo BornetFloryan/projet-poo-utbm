@@ -7,6 +7,7 @@ import java.awt.Dimension;
 public final class MainWindow extends JFrame {
     private static final long serialVersionUID = 1L;
 
+    /** Crée la fenêtre principale du jeu. */
     public MainWindow() {
         super("Survival Game 2D — Édition Arène");
         setDefaultCloseOperation(EXIT_ON_CLOSE);

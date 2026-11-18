@@ -19,25 +19,42 @@ import java.io.IOException;
 import java.util.List;
 
 /** Vue du jeu et point d'entrée des événements Swing. */
+@SuppressWarnings("serial")
 public final class GamePanel extends JPanel implements MouseListener {
     private static final long serialVersionUID = 1L;
 
+    /** Contrôleur de la session affichée. */
     private final GameEngine engine = new GameEngine();
+    /** Dessine les écrans et le monde. */
     private final GameRenderer renderer = new GameRenderer();
+    /** Gestionnaire des raccourcis clavier. */
     private final KeyboardInput keyboard = new KeyboardInput();
+    /** Gestionnaire de visée et de tir. */
     private final MouseInput mouse = new MouseInput();
+    /** Horloge de rafraîchissement du jeu. */
     private final javax.swing.Timer timer;
+    /** Dernier message d'action affiché. */
     private String notice = "";
+    /** Erreur éventuelle de lecture du classement. */
     private String scoreError;
+    /** Scores mis en cache pendant l'affichage. */
     private List<ScoreEntry> scoreCache = List.of();
+    /** Indique si le classement doit être relu. */
     private boolean scoresNeedReload = true;
+    /** Date d'expiration du message temporaire. */
     private long noticeExpires;
+    /** Échelle logique de la fenêtre. */
     private double scale = 1;
+    /** Décalage horizontal de l'affichage logique. */
     private double offsetX;
+    /** Décalage vertical de l'affichage logique. */
     private double offsetY;
+    /** Décalage horizontal de la carte. */
     private int mapOffsetX;
+    /** Décalage vertical de la carte. */
     private int mapOffsetY;
 
+    /** Initialise le panneau, les entrées et l'horloge de jeu. */
     public GamePanel() {
         setFocusable(true);
         setBackground(new java.awt.Color(12, 16, 24));
@@ -118,23 +135,47 @@ public final class GamePanel extends JPanel implements MouseListener {
     }
 
     private void handleMenuClick(int x, int y) {
-        if (inside(x, y, 365, 260, 230, 52)) {
+        if (inside(x, y, 365, 225, 230, 52)) {
+            loadGame();
+        } else if (inside(x, y, 365, 285, 230, 52)) {
             engine.startNewGame();
             updateMouseMapOffset();
-        } else if (inside(x, y, 365, 325, 230, 52)) {
+        } else if (inside(x, y, 365, 345, 230, 52)) {
             scoresNeedReload = true;
             engine.setStatus(GameStatus.SCORES);
-        } else if (inside(x, y, 365, 390, 230, 52)) {
+        } else if (inside(x, y, 365, 405, 230, 52)) {
             engine.setStatus(GameStatus.HELP);
-        } else if (inside(x, y, 365, 455, 230, 52)) {
+        } else if (inside(x, y, 365, 465, 230, 52)) {
             System.exit(0);
         }
     }
 
+    private void loadGame() {
+        try {
+            engine.loadGame();
+            updateMouseMapOffset();
+            notice = "Partie chargée.";
+        } catch (IOException exception) {
+            notice = exception.getMessage();
+        }
+        noticeExpires = System.currentTimeMillis() + 3000;
+    }
+
     private void handlePauseClick(int x, int y) {
-        if (inside(x, y, 365, 285, 230, 52)) engine.setStatus(GameStatus.PLAYING);
-        else if (inside(x, y, 365, 350, 230, 52)) engine.startNewGame();
-        else if (inside(x, y, 365, 415, 230, 52)) engine.setStatus(GameStatus.MENU);
+        if (inside(x, y, 365, 270, 230, 52)) engine.setStatus(GameStatus.PLAYING);
+        else if (inside(x, y, 365, 335, 230, 52)) engine.startNewGame();
+        else if (inside(x, y, 365, 400, 230, 52)) saveGame();
+        else if (inside(x, y, 365, 465, 230, 52)) engine.setStatus(GameStatus.MENU);
+    }
+
+    private void saveGame() {
+        try {
+            engine.saveGame();
+            notice = "Partie sauvegardée dans savegame.properties.";
+        } catch (IOException exception) {
+            notice = "Sauvegarde impossible : " + exception.getMessage();
+        }
+        noticeExpires = System.currentTimeMillis() + 3000;
     }
 
     private void handleShopClick(int x, int y) {

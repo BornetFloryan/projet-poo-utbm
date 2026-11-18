@@ -8,14 +8,37 @@ public final class WaveManager {
     private int remainingToSpawn;
     private long lastSpawnTime;
 
+    /** Crée le gestionnaire des vagues. */
+    public WaveManager() { }
+
+    /** Initialise la séquence d'apparition d'une vague.
+     * @param state état de partie actif
+     */
     public void startWave(GameState state) {
         random = new Random(state.getMap().getSeed() + state.getWave() * 7919L);
         remainingToSpawn = Math.min(5 + state.getWave() * 2, 32);
         lastSpawnTime = 0;
     }
 
+    /** Retourne le nombre d'ennemis encore attendus dans la vague.
+     * @return nombre d'apparitions restantes
+     */
     public int getRemainingToSpawn() { return remainingToSpawn; }
 
+    /** Restaure le compteur d'apparitions après le chargement d'une partie.
+     * @param remainingToSpawn nombre d'ennemis restant à faire apparaître
+     */
+    public void restoreRemainingToSpawn(int remainingToSpawn) {
+        if (remainingToSpawn < 0 || remainingToSpawn > 32) {
+            throw new IllegalArgumentException("Compteur d'apparitions invalide.");
+        }
+        this.remainingToSpawn = remainingToSpawn;
+        lastSpawnTime = 0;
+    }
+
+    /** Fait apparaître un ennemi lorsque la cadence et la limite le permettent.
+     * @param state état de partie à modifier
+     */
     public void update(GameState state) {
         long now = System.currentTimeMillis();
         if (remainingToSpawn == 0 || state.getEnemies().size() >= 14

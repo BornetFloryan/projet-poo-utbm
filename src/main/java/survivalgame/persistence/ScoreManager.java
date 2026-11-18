@@ -13,12 +13,25 @@ import java.util.List;
 public final class ScoreManager {
     private final Path file = Path.of("highscores.txt");
 
+    /** Crée un gestionnaire du classement du dossier courant. */
+    public ScoreManager() { }
+
+    /** Charge et trie les dix meilleurs scores.
+     * @return scores classés par ordre décroissant
+     * @throws IOException si le fichier ne peut pas être lu
+     */
     public List<ScoreEntry> getTopScores() throws IOException {
         List<ScoreEntry> scores = loadScores();
         scores.sort(Comparator.comparingInt(ScoreEntry::score).reversed());
         return scores.subList(0, Math.min(10, scores.size()));
     }
 
+    /** Ajoute un score après validation du pseudonyme.
+     * @param name pseudonyme (1 à 16 caractères)
+     * @param score score obtenu
+     * @throws IOException si le fichier ne peut pas être écrit
+     * @throws IllegalArgumentException si le pseudonyme est invalide
+     */
     public void addScore(String name, int score) throws IOException {
         String cleanName = name == null ? "" : name.strip();
         if (cleanName.isEmpty() || cleanName.length() > 16

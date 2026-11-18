@@ -13,6 +13,13 @@ import java.util.Set;
 public final class KeyboardInput {
     private final Set<Integer> pressedKeys = new HashSet<>();
 
+    /** Crée un gestionnaire de touches sans touche active. */
+    public KeyboardInput() { }
+
+    /** Associe les touches de déplacement et de pause au composant.
+     * @param component composant Swing recevant les raccourcis
+     * @param pauseAction action déclenchée par Échap
+     */
     public void attach(JComponent component, Runnable pauseAction) {
         int[] codes = {KeyEvent.VK_W, KeyEvent.VK_Z, KeyEvent.VK_A, KeyEvent.VK_Q,
                 KeyEvent.VK_S, KeyEvent.VK_D};
@@ -21,6 +28,9 @@ public final class KeyboardInput {
         bind(component, "pressed ESCAPE", "pause", pauseAction);
     }
 
+    /** Calcule le vecteur de déplacement normalisé en diagonale.
+     * @return direction courante
+     */
     public Point2D.Double getDirection() {
         double x = 0;
         double y = 0;

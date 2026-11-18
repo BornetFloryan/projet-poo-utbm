@@ -10,26 +10,46 @@ import survivalgame.model.Player;
 import survivalgame.model.Projectile;
 import survivalgame.model.ShopManager;
 import survivalgame.model.WaveManager;
+import survivalgame.persistence.GameSaveManager;
+import survivalgame.persistence.SavedGame;
 import survivalgame.persistence.ScoreManager;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
 /** Coordonne les entrées de jeu, la simulation, les vagues et les achats. */
 public final class GameEngine {
+    /** Crée le contrôleur et les services d'une session. */
+    public GameEngine() { }
+
     private final MapGenerator mapGenerator = new MapGenerator();
     private final WaveManager waveManager = new WaveManager();
     private final ShopManager shopManager = new ShopManager();
     private final ScoreManager scoreManager = new ScoreManager();
+    private final GameSaveManager gameSaveManager = new GameSaveManager();
     private GameState state;
     private GameStatus status = GameStatus.MENU;
     private long lastShotTime;
 
+    /** Retourne l'écran ou la phase de jeu active.
+     * @return état d'affichage courant
+     */
     public GameStatus getStatus() { return status; }
+    /** Retourne la partie active, s'il y en a une.
+     * @return état courant ou null avant la première partie
+     */
     public GameState getState() { return state; }
+    /** Retourne le gestionnaire du classement.
+     * @return gestionnaire de scores
+     */
     public ScoreManager getScoreManager() { return scoreManager; }
+    /** Définit l'écran actuellement affiché.
+     * @param status nouvel état d'affichage
+     */
     public void setStatus(GameStatus status) { this.status = status; }
 
+    /** Crée une partie et démarre sa première vague. */
     public void startNewGame() {
         state = new GameState(mapGenerator.generate());
         waveManager.startWave(state);
@@ -37,6 +57,27 @@ public final class GameEngine {
         lastShotTime = 0;
     }
 
+    /** Sauvegarde la partie active.
+     * @throws IOException si aucune partie n'existe ou si le fichier ne peut pas être écrit
+     */
+    public void saveGame() throws IOException {
+        if (state == null) throw new IOException("Aucune partie à sauvegarder.");
+        gameSaveManager.save(state, waveManager.getRemainingToSpawn());
+    }
+
+    /** Charge une partie sauvegardée et rétablit le compteur d'apparitions.
+     * @throws IOException si le fichier est absent, illisible ou invalide
+     */
+    public void loadGame() throws IOException {
+        SavedGame savedGame = gameSaveManager.load();
+        state = savedGame.state();
+        waveManager.startWave(state);
+        waveManager.restoreRemainingToSpawn(savedGame.remainingToSpawn());
+        status = GameStatus.PLAYING;
+        lastShotTime = 0;
+    }
+
+    /** Passe à la vague suivante et renouvelle la carte toutes les trois vagues. */
     public void startNextWave() {
         state.advanceWave();
         if (state.getWave() % 3 == 0) {
@@ -59,9 +100,18 @@ public final class GameEngine {
         return first.getEntrances().equals(second.getEntrances());
     }
 
+    /** Demande un achat à la boutique.
+     * @param item article demandé
+     * @return message de résultat destiné à l'interface
+     */
     public String purchase(ShopManager.Item item) { return shopManager.buy(state, item); }
 
-    /** Avance une image de jeu à partir des contrôles maintenus. */
+    /** Avance la simulation d'un pas à partir des contrôles maintenus.
+     * @param directionX déplacement horizontal
+     * @param directionY déplacement vertical
+     * @param aim position visée dans les coordonnées de l'arène
+     * @param shooting vrai si le bouton de tir est maintenu
+     */
     public void update(double directionX, double directionY, Point2D aim, boolean shooting) {
         if (status != GameStatus.PLAYING || state == null) return;
         Player player = state.getPlayer();

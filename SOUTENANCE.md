@@ -6,7 +6,7 @@ Survival Game 2D est un jeu d'arène en vue de dessus. Le joueur esquive les zom
 
 ## Fonctionnalités présentes
 
-Menu, instructions, classement, déplacement AZERTY/QWERTY, tir automatique, deux ennemis, collisions, invulnérabilité temporaire, vagues, boutique (deux armes, dégâts, cadence, soin), carte à génération pseudo-aléatoire, redimensionnement avec conservation des proportions, pause, game over et sauvegarde des scores.
+Menu, instructions, classement, déplacement AZERTY/QWERTY, tir automatique, deux ennemis, collisions, invulnérabilité temporaire, vagues, boutique (deux armes, dégâts, cadence, soin), carte à génération pseudo-aléatoire, redimensionnement avec conservation des proportions, pause, game over, sauvegarde/reprise complète d'une partie et sauvegarde des scores.
 
 ## Choix POO à illustrer
 
@@ -14,6 +14,7 @@ Menu, instructions, classement, déplacement AZERTY/QWERTY, tir automatique, deu
 - **Héritage** : `FastZombie` et `NormalZombie` héritent de `Enemy`, lui-même personnage et entité.
 - **Polymorphisme** : la collection d'ennemis est déclarée `List<Enemy>` ; le rendu les distingue par type et chaque zombie porte ses propres paramètres de vie/vitesse hérités.
 - **Composition** : une partie (`GameState`) conserve les objets qui participent à son état et sa carte.
+- **Persistance** : `GameSaveManager` écrit un fichier temporaire puis remplace la sauvegarde, et valide les données à la lecture.
 - **MVC** : `model` contient les données/règles métier, `GameEngine` du package `controller` coordonne la simulation, `view` dessine l'état, et `persistence` gère les scores.
 
 ## Algorithmes à expliquer
@@ -22,11 +23,11 @@ Le vecteur de déplacement est normalisé pour que la diagonale ne soit pas plus
 
 ## Limites réellement constatées
 
-Le PDF fourni contient des glyphes vectorisés sans couche de texte récupérable par les outils disponibles ; ses exigences n'ont donc pas été présentées comme lues. Le diagramme UML d'origine était un PNG ; le PlantUML a été réorganisé pour refléter les packages MVC et les classes du code. Les vérifications automatisées couvrent les règles, mais pas les clics Swing ; la démonstration visuelle avec souris/clavier doit être faite sur un poste graphique.
+Le diagramme UML d'origine était une image ; le PlantUML du projet reflète les packages MVC et les classes actuelles. Les vérifications automatisées couvrent le modèle, le chargement/sauvegarde et le rendu hors écran. Les clics Swing doivent encore être démontrés sur un poste graphique.
 
 ## Améliorations possibles
 
-Ajouter des effets sonores et animations, des tests de rendu en interface, une génération plus variée et un écran de saisie de pseudonyme intégré au lieu d'une boîte de dialogue.
+Ajouter des effets sonores et animations, des tests de clic Swing, une génération plus variée et un écran de saisie de pseudonyme intégré au lieu d'une boîte de dialogue.
 
 ## Questions possibles
 

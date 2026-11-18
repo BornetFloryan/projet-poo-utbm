@@ -4,8 +4,15 @@ package survivalgame.model;
 public final class Barricade extends Obstacle {
     private int durability = 4;
 
+    /** Crée une barricade intacte.
+     * @param column colonne de la case
+     * @param row ligne de la case
+     */
     public Barricade(int column, int row) { super(column, row); }
     @Override public boolean isDestructible() { return true; }
+    /** Retourne la résistance restante.
+     * @return durabilité comprise entre zéro et quatre
+     */
     public int getDurability() { return durability; }
     @Override public boolean takeDamage(int damage) {
         durability = Math.max(0, durability - damage);

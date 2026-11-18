@@ -1,6 +1,7 @@
 package survivalgame;
 
 import survivalgame.controller.GameEngine;
+import survivalgame.model.Barricade;
 import survivalgame.model.Enemy;
 import survivalgame.model.FastZombie;
 import survivalgame.model.GameMap;
@@ -11,6 +12,8 @@ import survivalgame.model.Player;
 import survivalgame.model.Projectile;
 import survivalgame.model.ShopManager;
 import survivalgame.persistence.ScoreManager;
+import survivalgame.persistence.GameSaveManager;
+import survivalgame.persistence.SavedGame;
 import java.awt.geom.Point2D;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,6 +34,7 @@ public final class ModelChecks {
         checkEnemyTypes();
         checkGameEngine();
         checkScorePersistence();
+        checkGameSave();
         checkSpriteAtlas();
         System.out.println(checks + " vérifications réussies.");
     }
@@ -137,6 +141,75 @@ public final class ModelChecks {
         try { scores.addScore("\t", 4); }
         catch (IllegalArgumentException exception) { invalidNameRejected = true; }
         check(invalidNameRejected, "pseudonyme invalide refusé");
+    }
+
+    private static void checkGameSave() throws Exception {
+        GameState original = new GameState(new MapGenerator().generate(9182));
+        original.setWave(4);
+        original.getPlayer().addReward(125, 42);
+        original.getPlayer().setWeapon(survivalgame.model.Weapon.smg());
+        original.getPlayer().takeDamage(30);
+        original.getPlayer().setPosition(300, 200);
+        original.getPlayer().setFacingAngle(0.75);
+        NormalZombie normalZombie = new NormalZombie(160, 160);
+        normalZombie.takeDamage(8);
+        normalZombie.setFacingAngle(1.2);
+        original.getEnemies().add(normalZombie);
+        original.getEnemies().add(new FastZombie(200, 160));
+        original.getProjectiles().add(new Projectile(320, 220, 4, -2, 12, 300));
+
+        GameMap.SpawnPoint window = original.getMap().getEntrances().stream()
+                .filter(entrance -> entrance.type() == GameMap.SpawnType.WINDOW)
+                .findFirst().orElseThrow();
+        int barricadeColumn = window.column();
+        int barricadeRow = window.row();
+        if (barricadeRow == 0) barricadeRow++;
+        else if (barricadeRow == GameMap.ROWS - 1) barricadeRow--;
+        else if (barricadeColumn == 0) barricadeColumn++;
+        else barricadeColumn--;
+        original.getMap().damageBarricade(barricadeColumn, barricadeRow, 2);
+        int savedBarricadeColumn = barricadeColumn;
+        int savedBarricadeRow = barricadeRow;
+
+        GameSaveManager saves = new GameSaveManager();
+        saves.save(original, 3);
+        check(Files.isRegularFile(Path.of("savegame.properties")), "fichier de partie créé");
+        SavedGame loaded = saves.load();
+        GameState restored = loaded.state();
+        check(loaded.remainingToSpawn() == 3, "apparitions de vague restaurées");
+        check(restored.getWave() == 4, "vague restaurée");
+        check(restored.getMap().getSeed() == 9182, "graine de carte restaurée");
+        check(restored.getMap().getEntrances().equals(original.getMap().getEntrances()),
+                "carte régénérée identique");
+        check(restored.getPlayer().getHealth() == 70, "vie restaurée");
+        check(restored.getPlayer().getScore() == 125, "score restauré");
+        check(restored.getPlayer().getCredits() == 42, "crédits restaurés");
+        check(restored.getPlayer().getWeapon().equals(survivalgame.model.Weapon.smg()), "arme restaurée");
+        check(restored.getPlayer().getX() == 300 && restored.getPlayer().getY() == 200,
+                "position du joueur restaurée");
+        check(restored.getPlayer().getFacingAngle() == 0.75, "visée du joueur restaurée");
+        check(restored.getEnemies().size() == 2, "ennemis restaurés");
+        check(restored.getEnemies().get(0).getHealth() == 28, "vie du zombie restaurée");
+        check(restored.getEnemies().get(0).getFacingAngle() == 1.2, "orientation du zombie restaurée");
+        check(restored.getEnemies().get(1) instanceof FastZombie, "type du zombie rapide restauré");
+        check(restored.getProjectiles().size() == 1, "projectile restauré");
+        check(restored.getProjectiles().get(0).getRemainingRange() == 300,
+                "portée du projectile restaurée");
+        check(restored.getMap().getObstacles().stream()
+                .filter(Barricade.class::isInstance)
+                .map(Barricade.class::cast)
+                .anyMatch(barricade -> barricade.getColumn() == savedBarricadeColumn
+                        && barricade.getRow() == savedBarricadeRow && barricade.getDurability() == 2),
+                "durabilité de la barricade restaurée");
+
+        Files.writeString(Path.of("savegame.properties"), "version=999\n");
+        boolean invalidSaveRejected = false;
+        try {
+            saves.load();
+        } catch (java.io.IOException exception) {
+            invalidSaveRejected = true;
+        }
+        check(invalidSaveRejected, "sauvegarde d'une version inconnue refusée");
     }
 
     private static void checkSpriteAtlas() throws Exception {

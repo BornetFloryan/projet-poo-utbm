@@ -103,7 +103,16 @@ package view {
 package persistence {
   class ScoreManager
   class ScoreEntry <<record>>
+  class GameSaveManager
+  class SavedGame <<record>> {
+    +state: GameState
+    +remainingToSpawn: int
+  }
   ScoreManager --> "0..*" ScoreEntry
   GameEngine --> ScoreManager
+  GameEngine --> GameSaveManager
+  GameSaveManager ..> SavedGame : charge
+  GameSaveManager ..> GameState : restaure
+  SavedGame *-- GameState
 }
 @enduml

@@ -9,7 +9,7 @@ survivalgame/
   controller/   GameEngine : règles et transitions
   input/        KeyboardInput et MouseInput
   view/         MainWindow, GamePanel, GameRenderer, SpriteAtlas
-  persistence/  ScoreManager et ScoreEntry
+  persistence/  ScoreManager, ScoreEntry, GameSaveManager et SavedGame
 resources/images/arena-atlas.png
 ```
 
@@ -40,4 +40,4 @@ La première vague comprend 7 ennemis ; chaque vague ajoute 2 ennemis jusqu'au p
 
 ## Fichiers
 
-`ScoreManager` charge `highscores.txt` s'il existe, ignore une ligne corrompue avec un message sur la sortie d'erreur, trie les entrées et affiche les dix meilleures. Chaque enregistrement valide le pseudonyme avant l'ajout. Les erreurs de lecture ou d'écriture remontent à l'écran qui peut les présenter à l'utilisateur. Le fichier est relatif au dossier de lancement.
+`ScoreManager` charge `highscores.txt` s'il existe, ignore une ligne corrompue avec un message sur la sortie d'erreur, trie les entrées et affiche les dix meilleures. Chaque enregistrement valide le pseudonyme avant l'ajout. `GameSaveManager` enregistre atomiquement `savegame.properties` : vague, graine de carte, durabilité des barricades, position/vie/score/crédits/arme du joueur, ennemis, projectiles et apparitions restantes. Le chargement valide les valeurs et régénère la carte avec la même graine. Les erreurs de lecture, d'écriture ou de format sont remontées à l'interface. Ces fichiers sont dans le dossier depuis lequel le jeu est lancé.

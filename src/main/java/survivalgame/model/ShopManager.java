@@ -2,8 +2,23 @@ package survivalgame.model;
 
 /** Vérifie et applique les achats entre deux vagues. */
 public final class ShopManager {
-    public enum Item { SMG, RIFLE, DAMAGE, RATE, HEAL }
+    /** Crée un gestionnaire d'achats. */
+    public ShopManager() { }
 
+    /** Articles disponibles pendant l'entracte. */
+    public enum Item {
+        /** Débloquer la mitraillette. */ SMG,
+        /** Débloquer le fusil. */ RIFLE,
+        /** Augmenter les dégâts. */ DAMAGE,
+        /** Augmenter la cadence de tir. */ RATE,
+        /** Récupérer des points de vie. */ HEAL
+    }
+
+    /** Tente d'acheter un article et renvoie le résultat affichable.
+     * @param state état de partie
+     * @param item article choisi
+     * @return message de résultat
+     */
     public String buy(GameState state, Item item) {
         Player player = state.getPlayer();
         int price = priceOf(item);
