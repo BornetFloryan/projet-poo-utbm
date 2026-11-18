@@ -22,6 +22,12 @@ public final class GameState {
     public List<Projectile> getProjectiles() { return projectiles; }
     public int getWave() { return wave; }
     public void advanceWave() { wave++; }
+
+    /** Définit la vague lors de la restauration d'une progression. */
+    public void setWave(int wave) {
+        if (wave < 1) throw new IllegalArgumentException("La vague doit être positive.");
+        this.wave = wave;
+    }
     public void changeMap(GameMap map) {
         this.map = map;
         player.setPosition(map.getPixelWidth() / 2.0, map.getPixelHeight() / 2.0);

@@ -40,4 +40,4 @@ La première vague comprend 7 ennemis ; chaque vague ajoute 2 ennemis jusqu'au p
 
 ## Fichiers
 
-`ScoreManager` charge `highscores.txt` s'il existe, ignore une ligne corrompue avec un message sur la sortie d'erreur, trie les entrées et affiche les dix meilleures. Chaque enregistrement valide le pseudonyme avant l'ajout. Les erreurs de lecture ou d'écriture remontent à l'écran qui peut les présenter à l'utilisateur. Le fichier est relatif au dossier de lancement.
+`ScoreManager` charge `highscores.txt` s'il existe, ignore une ligne corrompue avec un message sur la sortie d'erreur, trie les entrées et affiche les dix meilleures. Chaque enregistrement valide le pseudonyme avant l'ajout. `GameSaveManager` écrit la progression dans `savegame.properties` : graine de carte, vague, points de vie, score, crédits et arme. La carte est régénérée avec la même graine. La reprise repart au début de la vague sauvegardée ; les ennemis déjà présents et les projectiles ne sont pas conservés. Les erreurs de lecture ou d'écriture sont remontées à l'interface. Ces fichiers sont relatifs au dossier de lancement.

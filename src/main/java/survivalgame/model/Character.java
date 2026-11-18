@@ -22,4 +22,10 @@ public abstract class Character extends Entity {
     public boolean isDead() { return health <= 0; }
     public void takeDamage(int amount) { health = Math.max(0, health - amount); }
     protected void heal(int amount) { health = Math.min(maxHealth, health + amount); }
+
+    /** Restaure les points de vie validés lors du chargement d'une partie. */
+    protected void restoreHealth(int health) {
+        if (health < 1 || health > maxHealth) throw new IllegalArgumentException("Vie invalide.");
+        this.health = health;
+    }
 }

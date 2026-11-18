@@ -11,7 +11,9 @@ import survivalgame.model.Projectile;
 import survivalgame.model.ShopManager;
 import survivalgame.model.WaveManager;
 import survivalgame.persistence.ScoreManager;
+import survivalgame.persistence.GameSaveManager;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,6 +23,7 @@ public final class GameEngine {
     private final WaveManager waveManager = new WaveManager();
     private final ShopManager shopManager = new ShopManager();
     private final ScoreManager scoreManager = new ScoreManager();
+    private final GameSaveManager gameSaveManager = new GameSaveManager();
     private GameState state;
     private GameStatus status = GameStatus.MENU;
     private long lastShotTime;
@@ -32,6 +35,24 @@ public final class GameEngine {
 
     public void startNewGame() {
         state = new GameState(mapGenerator.generate());
+        waveManager.startWave(state);
+        status = GameStatus.PLAYING;
+        lastShotTime = 0;
+    }
+
+    /** Sauvegarde la progression persistante de la partie en cours.
+     * @throws IOException si aucune partie n'est active ou si le fichier ne peut pas être écrit
+     */
+    public void saveGame() throws IOException {
+        if (state == null) throw new IOException("Aucune partie à sauvegarder.");
+        gameSaveManager.save(state);
+    }
+
+    /** Reprend la progression enregistrée au début de sa vague actuelle.
+     * @throws IOException si le fichier est absent, illisible ou invalide
+     */
+    public void loadGame() throws IOException {
+        state = gameSaveManager.load();
         waveManager.startWave(state);
         status = GameStatus.PLAYING;
         lastShotTime = 0;

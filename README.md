@@ -12,13 +12,14 @@ Depuis le dossier `Projet/` :
 ./run.sh
 ```
 
-Le script compile avec `javac` dans `out/` puis lance `survivalgame.Main`. En IDE, ouvrir `Projet/` et sélectionner `src/main/java` comme racine source. Le fichier `highscores.txt` est créé dans le dossier courant au premier enregistrement.
+Le script compile avec `javac` dans `out/` puis lance `survivalgame.Main`. En IDE, ouvrir `Projet/` et sélectionner `src/main/java` comme racine source. Le classement est enregistré dans `highscores.txt`. Depuis l'écran de pause, « Sauvegarder » crée `savegame.properties` dans le dossier de lancement ; « Continuer » au menu recharge cette progression.
 
 ## Commandes
 
 - `ZQSD` ou `WASD` : déplacement (diagonales normalisées).
 - Souris : visée ; maintenir le clic gauche : tir automatique.
 - `Échap` : pause/reprise.
+- Dans la pause : sauvegarder la progression ; elle reprend au début de la vague en cours.
 - Entre les vagues : achats dans la boutique.
 
 ## Organisation
@@ -35,4 +36,4 @@ Le script compile avec `javac` dans `out/` puis lance `survivalgame.Main`. En ID
 
 La carte fait 22 × 14 tuiles. Elle a quatre fenêtres barricadées et une échelle intérieure dont les positions varient d'une carte à l'autre. Une nouvelle carte apparaît toutes les trois vagues. Les zombies essaient de passer par les fenêtres et attaquent les barricades lorsqu'elles bloquent leur chemin ; le joueur peut aussi les détruire. Les sprites mobiles pivotent vers leur direction de visée ou de déplacement.
 
-Le PDF de modalités fourni et le PNG UML d'origine sont conservés à côté de ce README. Le PNG a servi de référence pour la hiérarchie des entités. Le PDF est composé de glyphes vectorisés sans texte extractible dans cet environnement ; les exigences détaillées du prompt joint ont donc servi de cahier des charges.
+Le PDF de modalités fourni et le diagramme UML d'origine sont conservés à côté de ce README. La correspondance entre les critères d'évaluation et les fonctionnalités est résumée dans `EVALUATION.md`.

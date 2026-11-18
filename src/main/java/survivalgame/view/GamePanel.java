@@ -118,23 +118,47 @@ public final class GamePanel extends JPanel implements MouseListener {
     }
 
     private void handleMenuClick(int x, int y) {
-        if (inside(x, y, 365, 260, 230, 52)) {
+        if (inside(x, y, 365, 225, 230, 52)) {
+            loadGame();
+        } else if (inside(x, y, 365, 285, 230, 52)) {
             engine.startNewGame();
             updateMouseMapOffset();
-        } else if (inside(x, y, 365, 325, 230, 52)) {
+        } else if (inside(x, y, 365, 345, 230, 52)) {
             scoresNeedReload = true;
             engine.setStatus(GameStatus.SCORES);
-        } else if (inside(x, y, 365, 390, 230, 52)) {
+        } else if (inside(x, y, 365, 405, 230, 52)) {
             engine.setStatus(GameStatus.HELP);
-        } else if (inside(x, y, 365, 455, 230, 52)) {
+        } else if (inside(x, y, 365, 465, 230, 52)) {
             System.exit(0);
         }
     }
 
+    private void loadGame() {
+        try {
+            engine.loadGame();
+            updateMouseMapOffset();
+            notice = "Progression chargée, reprise au début de la vague.";
+        } catch (IOException exception) {
+            notice = exception.getMessage();
+        }
+        noticeExpires = System.currentTimeMillis() + 3000;
+    }
+
     private void handlePauseClick(int x, int y) {
-        if (inside(x, y, 365, 285, 230, 52)) engine.setStatus(GameStatus.PLAYING);
-        else if (inside(x, y, 365, 350, 230, 52)) engine.startNewGame();
-        else if (inside(x, y, 365, 415, 230, 52)) engine.setStatus(GameStatus.MENU);
+        if (inside(x, y, 365, 270, 230, 52)) engine.setStatus(GameStatus.PLAYING);
+        else if (inside(x, y, 365, 335, 230, 52)) engine.startNewGame();
+        else if (inside(x, y, 365, 400, 230, 52)) saveGame();
+        else if (inside(x, y, 365, 465, 230, 52)) engine.setStatus(GameStatus.MENU);
+    }
+
+    private void saveGame() {
+        try {
+            engine.saveGame();
+            notice = "Progression enregistrée dans savegame.properties.";
+        } catch (IOException exception) {
+            notice = "Sauvegarde impossible : " + exception.getMessage();
+        }
+        noticeExpires = System.currentTimeMillis() + 3000;
     }
 
     private void handleShopClick(int x, int y) {

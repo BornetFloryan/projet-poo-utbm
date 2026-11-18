@@ -37,9 +37,9 @@ final class GameRenderer {
             }
             case PAUSED -> {
                 drawGame(graphics, state);
-                drawOverlay(graphics, "PAUSE", "Échap pour reprendre");
-                drawButtons(graphics, new String[]{"Reprendre", "Recommencer", "Menu"},
-                        365, 285, 65);
+                drawOverlay(graphics, "PAUSE", "La sauvegarde reprend au début de la vague actuelle");
+                drawButtons(graphics, new String[]{"Reprendre", "Recommencer", "Sauvegarder", "Menu"},
+                        365, 270, 65);
             }
             case GAME_OVER -> drawGameOver(graphics, state);
             case SCORES -> drawScores(graphics, scores, scoreError);
@@ -157,7 +157,8 @@ final class GameRenderer {
     private void drawMenu(Graphics2D g) {
         drawCentered(g, "SURVIVAL GAME", 140, 42, Color.WHITE);
         drawCentered(g, "ÉDITION ARÈNE", 180, 20, new Color(128, 168, 198));
-        drawButtons(g, new String[]{"Jouer", "Meilleurs scores", "Commandes", "Quitter"}, 365, 260, 65);
+        drawButtons(g, new String[]{"Continuer", "Jouer", "Meilleurs scores", "Commandes", "Quitter"},
+                365, 225, 60);
         drawCentered(g, "Survivez. Renforcez les barricades. Tenez le siège.", 560, 17, new Color(155, 171, 190));
     }
 

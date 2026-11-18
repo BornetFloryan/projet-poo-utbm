@@ -10,6 +10,8 @@ import survivalgame.model.NormalZombie;
 import survivalgame.model.Player;
 import survivalgame.model.Projectile;
 import survivalgame.model.ShopManager;
+import survivalgame.model.Weapon;
+import survivalgame.persistence.GameSaveManager;
 import survivalgame.persistence.ScoreManager;
 import java.awt.geom.Point2D;
 import java.nio.file.Files;
@@ -31,6 +33,7 @@ public final class ModelChecks {
         checkEnemyTypes();
         checkGameEngine();
         checkScorePersistence();
+        checkGameSave();
         checkSpriteAtlas();
         System.out.println(checks + " vérifications réussies.");
     }
@@ -137,6 +140,26 @@ public final class ModelChecks {
         try { scores.addScore("\t", 4); }
         catch (IllegalArgumentException exception) { invalidNameRejected = true; }
         check(invalidNameRejected, "pseudonyme invalide refusé");
+    }
+
+    private static void checkGameSave() throws Exception {
+        GameState original = new GameState(new MapGenerator().generate(9182));
+        original.setWave(4);
+        original.getPlayer().addReward(125, 42);
+        original.getPlayer().setWeapon(Weapon.smg());
+        original.getPlayer().takeDamage(30);
+
+        GameSaveManager manager = new GameSaveManager();
+        manager.save(original);
+        GameState restored = manager.load();
+        check(restored.getWave() == 4, "vague restaurée");
+        check(restored.getMap().getSeed() == 9182, "graine de carte restaurée");
+        check(restored.getMap().getEntrances().equals(original.getMap().getEntrances()),
+                "carte reproductible restaurée");
+        check(restored.getPlayer().getHealth() == 70, "vie restaurée");
+        check(restored.getPlayer().getScore() == 125, "score restauré");
+        check(restored.getPlayer().getCredits() == 42, "crédits restaurés");
+        check(restored.getPlayer().getWeapon().equals(Weapon.smg()), "arme restaurée");
     }
 
     private static void checkSpriteAtlas() throws Exception {
